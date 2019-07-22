@@ -14,11 +14,13 @@ public class Rock : MonoBehaviour {
 
     public GameObject lavaSprayPrefab;
     private RockSpawner rockFactory;
+    private GameManager gameManager;
     
 
     // Start is called before the first frame update
     void Awake() {
         rockFactory = GameObject.Find("RockFactory").GetComponent<RockSpawner>();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
     void OnEnable() {
         currentLerpTime = 0f;
@@ -57,8 +59,10 @@ public class Rock : MonoBehaviour {
     void OnTriggerExit2D(Collider2D col) {
         if (col.gameObject.tag == "Lava") {
             if (gameObject.tag == "Rock") {
+                rockFactory.AddRockToQueue();
                 gameObject.SetActive(false);
-                rockFactory.CreateRock();
+                gameManager.MissedRock();
+                
             } else {
                 DisableRock();
             }
@@ -67,8 +71,9 @@ public class Rock : MonoBehaviour {
 
     public void DisableRock() {
         rockFactory.activeRocks.Remove(gameObject);
+        rockFactory.AddRockToQueue();
         gameObject.SetActive(false);
-        rockFactory.CreateRock();
+        
     }
 
     void OnDisable() {

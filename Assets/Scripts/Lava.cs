@@ -15,4 +15,7 @@ public class Lava : MonoBehaviour
     {
         
     }
+
+    void OnTriggerEnter2D(Collider2D col) {
+    }
 }

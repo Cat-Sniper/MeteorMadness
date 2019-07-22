@@ -15,8 +15,10 @@ public class GameManager : MonoBehaviour
     public GameObject pauseMenu;
     public Camera cam;
     private int score;
+    private bool gameOver = false;
 
     [SerializeField] private Text scoreUI;
+    [SerializeField] private Text gameOverScore;
 
     [SerializeField] private GameObject pauseMenuUI;
     //Buttons
@@ -27,6 +29,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject continueButton;
     [SerializeField] private GameObject yesButton;
     [SerializeField] private GameObject noButton;
+    [SerializeField] private GameObject gameOverPanel;
    
 
     // Start is called before the first frame update
@@ -35,10 +38,12 @@ public class GameManager : MonoBehaviour
         pauseMenu.SetActive(false);
         yesButton.SetActive(false);
         noButton.SetActive(false);
+        gameOverPanel.SetActive(false);
         rockPool.SetBounds(cam.BoundsMin(), cam.BoundsMax());
         Time.timeScale = 1.0f;
         score = 0;
         scoreUI.text = score.ToString();
+        gameOverScore.text = score.ToString();
     }
 
     // Update is called once per frame
@@ -77,6 +82,7 @@ public class GameManager : MonoBehaviour
 
     // Pass in 0 for Restart or 1 for Quit: Important for YesButton 
     public void RestartOrQuitButton(int buttonID) {
+        gameOverPanel.SetActive(false);
         restartButton.SetActive(false);
         quitButton.SetActive(false);
         continueButton.SetActive(false);
@@ -86,9 +92,13 @@ public class GameManager : MonoBehaviour
     }
 
     public void NoButton() {
+        if (!gameOver)
+            continueButton.SetActive(true);
+        else
+            gameOverPanel.SetActive(true);
+
         restartButton.SetActive(true);
         quitButton.SetActive(true);
-        continueButton.SetActive(true);
         yesButton.SetActive(false);
         noButton.SetActive(false);
     }
@@ -101,7 +111,11 @@ public class GameManager : MonoBehaviour
             break;
 
             case 1:     //Quit the game normally
+            #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+            #else
             Application.Quit(0);
+            #endif
             break;
 
             default:    //Quit because error
@@ -113,5 +127,28 @@ public class GameManager : MonoBehaviour
     public void IncrementScore() {
         score ++;
         scoreUI.text = score.ToString();
+        gameOverScore.text = score.ToString();
+    }
+
+    public void MissedRock() {
+
+        playerHp -= 1;
+        if (playerHp >= 0)
+            hpUI[playerHp].SetActive(false);
+
+        if (playerHp <= 0)
+            GameOver();
+        
+    }
+
+    private void GameOver() {
+        gameOver = true;
+        PauseMenuButton();
+        GameObject.Find("ScorePanel").gameObject.SetActive(false);
+        GameObject.Find("Hearts").gameObject.SetActive(false);
+        continueButton.SetActive(false);
+        gameOverPanel.SetActive(true);
+       
+
     }
 }

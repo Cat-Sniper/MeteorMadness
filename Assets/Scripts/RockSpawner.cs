@@ -19,6 +19,10 @@ public class RockSpawner : MonoBehaviour {
     private float minPosX = 0;
     private float maxPosX = 0;
     private float paddingX = 0.5f;
+    public float rockSpawnTimer = 0.5f;
+    private float rockTimer = 0.0f;
+    private int rocksOnScreen = 5;      // Starting rocks / current active rocks on screen
+    private int rocksQueued = 0;        // How many rocks are ready to be spawned
     
 
     // Start is called before the first frame update
@@ -33,8 +37,8 @@ public class RockSpawner : MonoBehaviour {
             rockPool.Add(obj);
         }
 
-        for(int i = 0; i < 5; i++) {
-            CreateRock();
+        for(int i = 0; i < rocksOnScreen; i++) {
+            rocksQueued++;
         }
     }
 
@@ -62,32 +66,47 @@ public class RockSpawner : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        
+        rockTimer -= Time.deltaTime;
+
+        if (rockTimer <= 0)
+            canSpawnRocks = true;
+
+        if(rocksQueued > 0) {
+            if (canSpawnRocks) {
+                canSpawnRocks = false;
+                CreateRock();
+                rocksQueued--;
+                rockTimer = rockSpawnTimer;
+                
+            }
+        }
+
     }
 
+  
+
+    //Logic for spawing a rock from the rock object pool
     public void CreateRock()
     {
-        
-        if (canSpawnRocks)
-        {
-            
-            GameObject newRock = GetPooledObject();
-            if (newRock != null) {
-                float rot = GetRandomRotation();
-                newRock.transform.position = GetNewSpawnLocation();
-                newRock.transform.rotation = Quaternion.Euler(0, 0, rot);
-            }
 
-            float variantSpeed = Random.Range(0.5f, speed + 0.2f);
-            if(variantSpeed <= 0.6f)
-               variantSpeed = Random.Range(0.5f, 1.5f) * variantSpeed;
-            
-
-            newRock.GetComponent<Rock>().SetFallTime(fallTime);
-            newRock.GetComponent<Rock>().SetSpeed(variantSpeed);
-            activeRocks.Add(newRock);
-            newRock.SetActive(true);
+        GameObject newRock = GetPooledObject();
+        if (newRock != null) {
+            float rot = GetRandomRotation();
+            newRock.transform.position = GetNewSpawnLocation();
+            newRock.transform.rotation = Quaternion.Euler(0, 0, rot);
         }
+
+        float variantSpeed = Random.Range(0.5f, speed + 0.2f);
+        if (variantSpeed <= 0.6f)
+            variantSpeed = Random.Range(0.5f, 1.5f) * variantSpeed;
+
+
+        newRock.GetComponent<Rock>().SetFallTime(fallTime);
+        newRock.GetComponent<Rock>().SetSpeed(variantSpeed);
+        activeRocks.Add(newRock);
+        newRock.SetActive(true);
+        
+       
     }
 
     // Gets the screen boundaries for spawn position limitations
@@ -107,5 +126,7 @@ public class RockSpawner : MonoBehaviour {
         float rand0 = Random.Range(0f, 1f) * 360;
         return rand0;
     }
+
+    public void AddRockToQueue() { rocksQueued += 1; }
 
 }
