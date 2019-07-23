@@ -19,9 +19,9 @@ public class RockSpawner : MonoBehaviour {
     private float minPosX = 0;
     private float maxPosX = 0;
     private float paddingX = 0.5f;
-    public float rockSpawnTimer = 0.5f;
+    public float rockSpawnTimer = 0.75f;
     private float rockTimer = 0.0f;
-    private int rocksOnScreen = 5;      // Starting rocks / current active rocks on screen
+    private int rocksOnScreen = 1;      // Starting rocks / current active rocks on screen
     private int rocksQueued = 0;        // How many rocks are ready to be spawned
     
 
@@ -29,6 +29,7 @@ public class RockSpawner : MonoBehaviour {
     void Start()
     {
         
+        //Object Pool for rocks
         rockPool = new List<GameObject>();
         for (int i = 0; i < rocksToPool; i++) {
             GameObject obj = (GameObject)Instantiate(rockPrefab);
@@ -37,6 +38,7 @@ public class RockSpawner : MonoBehaviour {
             rockPool.Add(obj);
         }
 
+        //Starting Rocks
         for(int i = 0; i < rocksOnScreen; i++) {
             rocksQueued++;
         }
@@ -85,7 +87,7 @@ public class RockSpawner : MonoBehaviour {
 
   
 
-    //Logic for spawing a rock from the rock object pool
+    //Logic for spawning a rock from the rock object pool
     public void CreateRock()
     {
 
@@ -109,6 +111,11 @@ public class RockSpawner : MonoBehaviour {
        
     }
 
+    public void IncreaseDifficulty() {
+        CreateRock();
+        rocksOnScreen++;
+    }
+
     // Gets the screen boundaries for spawn position limitations
     public void SetBounds(Vector2 Minimum, Vector2 Maximum) {
         minPosX = Minimum.x + paddingX;
@@ -128,5 +135,6 @@ public class RockSpawner : MonoBehaviour {
     }
 
     public void AddRockToQueue() { rocksQueued += 1; }
+
 
 }

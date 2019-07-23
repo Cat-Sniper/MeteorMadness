@@ -47,9 +47,8 @@ public class GameManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-
+    void Update() {
+        
         
     }
 
@@ -128,6 +127,11 @@ public class GameManager : MonoBehaviour
         score ++;
         scoreUI.text = score.ToString();
         gameOverScore.text = score.ToString();
+
+        if (Mathf.Log(score, 2) % 1 == 0) {
+            rockPool.IncreaseDifficulty();
+            Debug.Log("Increasing Difficulty");
+        }
     }
 
     public void MissedRock() {

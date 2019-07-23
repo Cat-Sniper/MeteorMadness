@@ -20,27 +20,37 @@ public class InputManager : MonoBehaviour {
         if (!paused) {
             #region Testing
             if (Input.touchCount == 0 && Input.GetMouseButton(0)) {
+
                 Vector3 clickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 RaycastHit2D hit = Physics2D.Raycast(clickPos, Vector2.zero);
 
+
                 if (hit.collider != null && hit.collider.tag == "Rock") {
-                    gameManager.IncrementScore();
+
                     Rock rock = hit.collider.gameObject.GetComponent<Rock>();
-                    rock.DisableRock();
+
+                    if (rock.canBeClicked) {
+                        gameManager.IncrementScore();
+                        rock.DisableRock();
+                    }
                 }
             }
             #endregion
 
             for (int i = 0; i < Input.touchCount; i++) {
+
                 Vector3 touchPos = Camera.main.ScreenToWorldPoint(Input.GetTouch(i).position);
                 RaycastHit2D hit = Physics2D.Raycast(touchPos, Vector2.zero);
 
+
                 if (hit.collider != null && hit.collider.tag == "Rock") {
 
-                    gameManager.IncrementScore();
                     Rock rock = hit.collider.gameObject.GetComponent<Rock>();
-                    rock.DisableRock();
-                    
+
+                    if (rock.canBeClicked) {
+                        gameManager.IncrementScore();
+                        rock.DisableRock();
+                    }
                 }
             }
         }

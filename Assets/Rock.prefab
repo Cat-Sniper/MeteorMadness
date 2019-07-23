@@ -131,4 +131,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d03478b7971650429cd843bfd88a2b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lavaSprayPrefab: {fileID: 0}
+  smokePrefab: {fileID: 7195998553514107323, guid: 7a2edd8507ed2694b99c33dfbe49fff2,
+    type: 3}
