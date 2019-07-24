@@ -5,7 +5,7 @@ using UnityEngine;
 public class Rock : MonoBehaviour {
     private bool paused = false;
     public bool canBeClicked = true;
-    private float RotationSpeed = 0;
+    private bool rotateRight = true;
     
     private float lerpTime = 100f;
     private float currentLerpTime = 0f;
@@ -29,6 +29,12 @@ public class Rock : MonoBehaviour {
         currentLerpTime = 0f;
         smokeEffect = null;
         canBeClicked = true;
+
+        float rotation = transform.rotation.eulerAngles.z;
+        if (rotation > 180f)
+            rotateRight = true;
+        else
+            rotateRight = false;
     }
 
 
@@ -36,15 +42,36 @@ public class Rock : MonoBehaviour {
     void Update() {
 
         if (!paused) {
+
+            #region MOVEMENT 
             currentLerpTime += Time.deltaTime;
             if(currentLerpTime > lerpTime) {
                 currentLerpTime = lerpTime;
             }
 
+ //           Vector2 xBounds = rockFactory.GetBounds();           //x is minimum bound along x-axis, y is maximum bound along x-axis
             Vector2 prevPos = transform.position;
+
+ /*           //Check in case the screen was flipped
+            if(prevPos.x < xBounds.x) 
+                prevPos.x = xBounds.x;
+            
+            else if(prevPos.x > xBounds.y) 
+                prevPos.x = xBounds.y;
+ */           
             Vector2 newPos = new Vector2(prevPos.x, prevPos.y - moveDistance);
             float percent = currentLerpTime / lerpTime;
+
             transform.position = Vector2.Lerp(prevPos, newPos, percent);
+            #endregion 
+
+            #region ROTATION
+            if (rotateRight) {
+                transform.Rotate(Vector3.forward * moveDistance/2);
+            } else
+                transform.Rotate(Vector3.back * moveDistance/2);
+
+            #endregion
         }
     }
 

@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
     public Camera cam;
     private int score;
     private bool gameOver = false;
+    private ScreenOrientation orientation;
+    private int screenWidth;
 
     [SerializeField] private Text scoreUI;
     [SerializeField] private Text gameOverScore;
@@ -44,12 +46,24 @@ public class GameManager : MonoBehaviour
         score = 0;
         scoreUI.text = score.ToString();
         gameOverScore.text = score.ToString();
+        orientation = Screen.orientation;
+        screenWidth = Screen.width;
     }
 
     // Update is called once per frame
     void Update() {
-        
-        
+
+#if UNITY_EDITOR
+        if(screenWidth != Screen.width) {
+            screenWidth = Screen.width;
+            rockPool.SetBounds(cam.BoundsMin(), cam.BoundsMax());
+        }
+#else
+        if (Screen.orientation != orientation) {
+            orientation = Screen.orientation;
+            rockPool.SetBounds(cam.BoundsMin(), cam.BoundsMax());
+        }
+#endif
     }
 
     public void PauseMenuButton() {
@@ -110,11 +124,11 @@ public class GameManager : MonoBehaviour
             break;
 
             case 1:     //Quit the game normally
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
-            #else
+#else
             Application.Quit(0);
-            #endif
+#endif
             break;
 
             default:    //Quit because error
@@ -128,9 +142,22 @@ public class GameManager : MonoBehaviour
         scoreUI.text = score.ToString();
         gameOverScore.text = score.ToString();
 
+        //More Rocks!
         if (Mathf.Log(score, 2) % 1 == 0) {
             rockPool.IncreaseDifficulty();
             Debug.Log("Increasing Difficulty");
+        }
+
+        //Speed up!
+        if(score % 25 == 0) {
+            rockPool.IncreaseSpeed();
+            Debug.Log("Increasing Speed");
+        }
+
+        //Gain 1 hp up to three every 100 points
+        if(score % 100 == 0 && playerHp < 3) {
+            hpUI[playerHp].SetActive(true);
+            playerHp++;
         }
     }
 
@@ -143,6 +170,10 @@ public class GameManager : MonoBehaviour
         if (playerHp <= 0)
             GameOver();
         
+    }
+
+    public void GainHP() {
+
     }
 
     private void GameOver() {

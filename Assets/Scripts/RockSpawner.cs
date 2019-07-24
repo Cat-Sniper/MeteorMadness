@@ -21,8 +21,7 @@ public class RockSpawner : MonoBehaviour {
     private float paddingX = 0.5f;
     public float rockSpawnTimer = 0.75f;
     private float rockTimer = 0.0f;
-    private int rocksOnScreen = 1;      // Starting rocks / current active rocks on screen
-    private int rocksQueued = 0;        // How many rocks are ready to be spawned
+    private int rocksQueued = 1;        // How many rocks are ready to be spawned
     
 
     // Start is called before the first frame update
@@ -38,10 +37,6 @@ public class RockSpawner : MonoBehaviour {
             rockPool.Add(obj);
         }
 
-        //Starting Rocks
-        for(int i = 0; i < rocksOnScreen; i++) {
-            rocksQueued++;
-        }
     }
 
     //Goes through the current pooled rocks and returns the first inactive one it finds (if any)
@@ -112,14 +107,24 @@ public class RockSpawner : MonoBehaviour {
     }
 
     public void IncreaseDifficulty() {
-        CreateRock();
-        rocksOnScreen++;
+        rocksQueued++;
     }
 
     // Gets the screen boundaries for spawn position limitations
     public void SetBounds(Vector2 Minimum, Vector2 Maximum) {
         minPosX = Minimum.x + paddingX;
         maxPosX = Maximum.x - paddingX;
+
+        foreach (GameObject rock in rockPool) {
+            if (rock.activeInHierarchy) {
+
+                //In case rocks are off screen after rotating
+                if (rock.transform.position.x < minPosX)
+                    rock.transform.position = new Vector2(minPosX, rock.transform.position.y);
+                else if (rock.transform.position.x > maxPosX)
+                    rock.transform.position = new Vector2(maxPosX, rock.transform.position.y);
+            }
+        }
     }
 
     // Returns a random position just above the top of the screen
@@ -135,6 +140,8 @@ public class RockSpawner : MonoBehaviour {
     }
 
     public void AddRockToQueue() { rocksQueued += 1; }
+    public void IncreaseSpeed() { fallTime -= 10f; }
 
+    public Vector2 GetBounds() { return new Vector2(minPosX, maxPosX); }
 
 }
