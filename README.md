@@ -1,5 +1,5 @@
 # MeteorMadness
-Rock game built in unity for Android Devices and web.
+An iteration of a previous project named Falling Rocks - Rock game built in unity for Android Devices and web.
 
 
 ## How to play
