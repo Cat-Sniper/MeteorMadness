@@ -3,125 +3,147 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Rock : MonoBehaviour {
-    private bool paused = false;
-    public bool canBeClicked = true;
-    private bool rotateRight = true;
+     private bool paused = false;
+     public bool canBeClicked = true;
+     private bool rotateRight = true;
+     private bool canRotate = true;
+     [SerializeField] private float moveDistance = 1f;
+
+     // Death Timer
+     private bool isDying = false;
+     private float timeToDeath = 1f;
+     private float deathTimer = 0f;
+     private bool snitched = false;
+
+     public GameObject smokePrefab;
+     private GameObject smokeEffect;
+     private RockSpawner rockFactory;
+     private GameManager gameManager;
+     private SpriteRenderer spr;
     
-    private float lerpTime = 100f;
-    private float currentLerpTime = 0f;
-    private float moveDistance = 1f;
+
+     // Start is called before the first frame update
+     void Awake() {
+
+          rockFactory = GameObject.Find("RockFactory").GetComponent<RockSpawner>();
+          gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+          spr = gameObject.GetComponentInChildren<SpriteRenderer>();
+
+     }
+
+     void OnEnable() {
+
+     //     currentLerpTime = 0f;
+          smokeEffect = null;
+          canBeClicked = true;
+          canRotate = true;
+          isDying = false;
+          deathTimer = 0f;
+          snitched = false;
+          
+
+          float rotation = spr.transform.rotation.eulerAngles.z;
+
+          if (rotation > 180f)
+               rotateRight = true;
+          else
+               rotateRight = false;
+     }
 
 
-    public GameObject smokePrefab;
-    private GameObject smokeEffect;
-    private RockSpawner rockFactory;
-    private GameManager gameManager;
-    private SpriteRenderer spr;
-    
+     // Update is called once per frame
+     void Update() {
 
-    // Start is called before the first frame update
-    void Awake() {
-        rockFactory = GameObject.Find("RockFactory").GetComponent<RockSpawner>();
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        spr = gameObject.GetComponent<SpriteRenderer>();
-    }
-    void OnEnable() {
-        currentLerpTime = 0f;
-        smokeEffect = null;
-        canBeClicked = true;
+          if (!paused) {
 
-        float rotation = transform.rotation.eulerAngles.z;
-        if (rotation > 180f)
-            rotateRight = true;
-        else
-            rotateRight = false;
-    }
+               #region MOVEMENT 
+               Vector2 prevPos = transform.position;
+               float dT = Time.deltaTime;
 
+               transform.Translate(Vector3.down * dT * moveDistance);
+               #endregion
 
-    // Update is called once per frame
-    void Update() {
+               #region ROTATION
+               if (rotateRight) {
+                    spr.transform.Rotate(Vector3.forward * moveDistance * 0.1f);
+               } else
+                    spr.transform.Rotate(Vector3.back * moveDistance * 0.1f);
+               #endregion
 
-        if (!paused) {
+               if (isDying && !snitched)
+                    if (deathTimer >= timeToDeath) {
 
-            #region MOVEMENT 
-            currentLerpTime += Time.deltaTime;
-            if(currentLerpTime > lerpTime) {
-                currentLerpTime = lerpTime;
-            }
+                         gameManager.MissedRock();
+                         rockFactory.AddRockToQueue();
+                         snitched = true;
 
- //           Vector2 xBounds = rockFactory.GetBounds();           //x is minimum bound along x-axis, y is maximum bound along x-axis
-            Vector2 prevPos = transform.position;
-
- /*           //Check in case the screen was flipped
-            if(prevPos.x < xBounds.x) 
-                prevPos.x = xBounds.x;
-            
-            else if(prevPos.x > xBounds.y) 
-                prevPos.x = xBounds.y;
- */           
-            Vector2 newPos = new Vector2(prevPos.x, prevPos.y - moveDistance);
-            float percent = currentLerpTime / lerpTime;
-
-            transform.position = Vector2.Lerp(prevPos, newPos, percent);
-            #endregion 
-
-            #region ROTATION
-            if (rotateRight) {
-                transform.Rotate(Vector3.forward * moveDistance/2);
-            } else
-                transform.Rotate(Vector3.back * moveDistance/2);
-
-            #endregion
-        }
-    }
+                    } else 
+                         deathTimer += dT;
+                    
+                         
+          }
+     }     
 
 
     //Particle effects and slowdown of rock on entering lava - can no longer be clicked on
-    void OnTriggerEnter2D(Collider2D col) {
-        if (col.gameObject.tag == "Lava") {
-            if (gameObject.tag == "Rock") {
-                canBeClicked = false;
-                spr.color = Color.red;
-                lerpTime = 1000;
-                smokeEffect = (GameObject)Instantiate(smokePrefab);
-                smokeEffect.transform.position = transform.position;
+     void OnTriggerEnter2D(Collider2D col) {
+
+          if (col.gameObject.tag == "Lava") {
+
+               if (gameObject.tag == "Rock") {
+
+                     canBeClicked = false;
+                     spr.color = Color.red;
+                     moveDistance = 0.2f;
+                     smokeEffect = (GameObject)Instantiate(smokePrefab);
+                     smokeEffect.transform.position = transform.position;
+
+                    // Start death timer?
+                    isDying = true;
+
+               } else {
+
+               }
+          }
+     }
+
+     //Destroy the rock once it has left the screen
+     void OnTriggerExit2D(Collider2D col) {
+
+          if (col.gameObject.tag == "Lava") {
+
+               if (gameObject.tag == "Rock") {
+
+                    
+                    spr.color = Color.white;
+                    gameObject.SetActive(false);
                 
-            } else {
+               } else {
 
-            }
-        }
-    }
+                    DisableRock();
 
-    //Destroy the rock once it has left the screen
-    void OnTriggerExit2D(Collider2D col) {
-        if (col.gameObject.tag == "Lava") {
-            if (gameObject.tag == "Rock") {
-                rockFactory.AddRockToQueue();
-                spr.color = Color.white;
-                gameObject.SetActive(false);
-                gameManager.MissedRock();
-                
-            } else {
-                DisableRock();
-            }
-        }
-    }
+               }
+          }
+     }
 
-    public void DisableRock() {
-        rockFactory.activeRocks.Remove(gameObject);
-        rockFactory.AddRockToQueue();
-        gameObject.SetActive(false);
+     public void DisableRock() {
+
+          rockFactory.activeRocks.Remove(gameObject);
+          rockFactory.AddRockToQueue();
+          gameObject.SetActive(false);
         
-    }
+     }
 
-    void OnDisable() {
+     void OnDisable() {
 
-    }
+     }
 
-    public void SetSpeed(float spd) { moveDistance = spd; }
-    public void SetFallTime(float fall) { lerpTime = fall; }
-    public void SetPaused(bool psd) {
-        paused = psd;
-    }
+     public void SetSpeed(float spd) { moveDistance = spd; }
+
+     public void SetPaused(bool psd) {
+          paused = psd;
+     }
+
+     public GameObject GetSpriteObj() { return spr.gameObject; }
 
 }

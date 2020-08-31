@@ -144,14 +144,14 @@ public class GameManager : MonoBehaviour
 
         //More Rocks!
         if (Mathf.Log(score, 2) % 1 == 0) {
-            rockPool.IncreaseDifficulty();
-            Debug.Log("Increasing Difficulty");
+            rockPool.IncreaseSpeed();
+            Debug.Log("Increasing Speed");
         }
 
         //Speed up!
         if(score % 25 == 0) {
-            rockPool.IncreaseSpeed();
-            Debug.Log("Increasing Speed");
+            rockPool.IncreaseDifficulty();
+            Debug.Log("Increasing Difficulty");
         }
 
         //Gain 1 hp up to three every 100 points
