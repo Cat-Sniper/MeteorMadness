@@ -3,58 +3,67 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour {
-    private bool paused = false;
-    [SerializeField] GameManager gameManager;
+     private bool paused = false;
+     private bool canClick = true;
+     [SerializeField] GameManager gameManager;
 
-    // Start is called before the first frame update
-    void Start() {
+     // Start is called before the first frame update
+     void Start() {
 
-    }
+     }
 
-    // Update is called once per frame
-    void Update() {
-        TouchController();
-    }
+     // Update is called once per frame
+     void Update() {
+          TouchController();
+     }
 
-    private void TouchController() {
-        if (!paused) {
-            #region Testing
-            if (Input.touchCount == 0 && Input.GetMouseButton(0)) {
+     private void TouchController() {
 
-                Vector3 clickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                RaycastHit2D hit = Physics2D.Raycast(clickPos, Vector2.zero);
+          if (!paused) {
+
+               if (canClick) {
+
+                    if (Input.touchCount == 0 && Input.GetMouseButtonUp(0)) {
+
+                         Vector3 clickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                         RaycastHit2D hit = Physics2D.Raycast(clickPos, Vector2.zero);
 
 
-                if (hit.collider != null && hit.collider.tag == "Rock") {
+                         if (hit.collider != null && hit.collider.tag == "Rock") {
 
-                    Rock rock = hit.collider.gameObject.GetComponent<Rock>();
+                              Rock rock = hit.collider.gameObject.GetComponent<Rock>();
 
-                    if (rock.canBeClicked) {
-                        gameManager.IncrementScore();
-                        rock.DisableRock();
+                              if (rock.canBeClicked) {
+                                   gameManager.IncrementScore();
+                                   rock.DisableRock();
+                                   //canClick = false;
+                              }
+                         }
                     }
-                }
-            }
-            #endregion
-
-            for (int i = 0; i < Input.touchCount; i++) {
-
-                Vector3 touchPos = Camera.main.ScreenToWorldPoint(Input.GetTouch(i).position);
-                RaycastHit2D hit = Physics2D.Raycast(touchPos, Vector2.zero);
 
 
-                if (hit.collider != null && hit.collider.tag == "Rock") {
+                    for (int i = 0; i < Input.touchCount; i++) {
 
-                    Rock rock = hit.collider.gameObject.GetComponent<Rock>();
+                         Vector3 touchPos = Camera.main.ScreenToWorldPoint(Input.GetTouch(i).position);
+                         RaycastHit2D hit = Physics2D.Raycast(touchPos, Vector2.zero);
 
-                    if (rock.canBeClicked) {
-                        gameManager.IncrementScore();
-                        rock.DisableRock();
+
+                         if (hit.collider != null && hit.collider.tag == "Rock") {
+
+                              Rock rock = hit.collider.gameObject.GetComponent<Rock>();
+
+                              if (rock.canBeClicked) {
+                                   gameManager.IncrementScore();
+                                   rock.DisableRock();
+                                   //canClick = false;
+                              }
+                         }
                     }
-                }
-            }
-        }
-    }
+               }
 
-    public void SetPaused(bool psd) { paused = psd; }
+              
+          }
+     }
+
+     public void SetPaused(bool psd) { paused = psd; }
 }

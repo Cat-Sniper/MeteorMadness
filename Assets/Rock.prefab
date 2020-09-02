@@ -166,5 +166,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canBeClicked: 1
+  moveDistance: 1
   smokePrefab: {fileID: 7195998553514107323, guid: 7a2edd8507ed2694b99c33dfbe49fff2,
+    type: 3}
+  destructionPrefab: {fileID: 4470547082236100284, guid: 822d767a2fe753f459db3db668b0c141,
     type: 3}

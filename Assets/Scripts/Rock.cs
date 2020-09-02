@@ -16,7 +16,10 @@ public class Rock : MonoBehaviour {
      private bool snitched = false;
 
      public GameObject smokePrefab;
+     public GameObject destructionPrefab;
+
      private GameObject smokeEffect;
+     private GameObject destructionEffect;
      private RockSpawner rockFactory;
      private GameManager gameManager;
      private SpriteRenderer spr;
@@ -35,6 +38,7 @@ public class Rock : MonoBehaviour {
 
      //     currentLerpTime = 0f;
           smokeEffect = null;
+          destructionEffect = null;
           canBeClicked = true;
           canRotate = true;
           isDying = false;
@@ -130,6 +134,10 @@ public class Rock : MonoBehaviour {
 
           rockFactory.activeRocks.Remove(gameObject);
           rockFactory.AddRockToQueue();
+
+          destructionEffect = (GameObject)Instantiate(destructionPrefab);
+          destructionEffect.transform.position = transform.position;
+
           gameObject.SetActive(false);
         
      }
