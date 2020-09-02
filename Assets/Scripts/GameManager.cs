@@ -7,183 +7,193 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
 
-    private int playerHp = 3;
-    [SerializeField] private GameObject[] hpUI;
-    [SerializeField] private RockSpawner rockPool;
-    [SerializeField] private InputManager inputMan;
+     private int playerHp = 3;
+     [SerializeField] private GameObject[] hpUI;
+     [SerializeField] private RockSpawner rockPool;
+     [SerializeField] private InputManager inputMan;
 
-    public GameObject pauseMenu;
-    public Camera cam;
-    private int score;
-    private bool gameOver = false;
-    private ScreenOrientation orientation;
-    private int screenWidth;
+     public GameObject pauseMenu;
+     public Camera cam;
+     private int score;
+     private int prevScore;
+     private int scoreInc = 0;
+     private bool gameOver = false;
+     private ScreenOrientation orientation;
+     private int screenWidth;
 
-    [SerializeField] private Text scoreUI;
-    [SerializeField] private Text gameOverScore;
+     [SerializeField] private Text scoreUI;
+     [SerializeField] private Text gameOverScore;
 
-    [SerializeField] private GameObject pauseMenuUI;
-    //Buttons
-    private int buttonId = -1; //0 - restart, 1 - Quit;
-    [SerializeField] private GameObject pauseButton;
-    [SerializeField] private GameObject restartButton;
-    [SerializeField] private GameObject quitButton;
-    [SerializeField] private GameObject continueButton;
-    [SerializeField] private GameObject yesButton;
-    [SerializeField] private GameObject noButton;
-    [SerializeField] private GameObject gameOverPanel;
+     [SerializeField] private GameObject pauseMenuUI;
+     //Buttons
+     private int buttonId = -1; //0 - restart, 1 - Quit;
+     [SerializeField] private GameObject pauseButton;
+     [SerializeField] private GameObject restartButton;
+     [SerializeField] private GameObject quitButton;
+     [SerializeField] private GameObject continueButton;
+     [SerializeField] private GameObject yesButton;
+     [SerializeField] private GameObject noButton;
+     [SerializeField] private GameObject gameOverPanel;
    
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        pauseMenu.SetActive(false);
-        yesButton.SetActive(false);
-        noButton.SetActive(false);
-        gameOverPanel.SetActive(false);
-        rockPool.SetBounds(cam.BoundsMin(), cam.BoundsMax());
-        Time.timeScale = 1.0f;
-        score = 0;
-        scoreUI.text = score.ToString();
-        gameOverScore.text = score.ToString();
-        orientation = Screen.orientation;
-        screenWidth = Screen.width;
-    }
+     // Start is called before the first frame update
+     void Start()
+     {
+          pauseMenu.SetActive(false);
+          yesButton.SetActive(false);
+          noButton.SetActive(false);
+          gameOverPanel.SetActive(false);
+          rockPool.SetBounds(cam.BoundsMin(), cam.BoundsMax());
+          Time.timeScale = 1.0f;
+          score = 0;
+          prevScore = 0;
+          scoreUI.text = score.ToString();
+          gameOverScore.text = score.ToString();
+          orientation = Screen.orientation;
+          screenWidth = Screen.width;
+     }
 
-    // Update is called once per frame
-    void Update() {
+     // Update is called once per frame
+     void Update() {
 
 #if UNITY_EDITOR
-        if(screenWidth != Screen.width) {
-            screenWidth = Screen.width;
-            rockPool.SetBounds(cam.BoundsMin(), cam.BoundsMax());
-        }
+          if(screenWidth != Screen.width) {
+               screenWidth = Screen.width;
+               rockPool.SetBounds(cam.BoundsMin(), cam.BoundsMax());
+          }
 #else
-        if (Screen.orientation != orientation) {
-            orientation = Screen.orientation;
-            rockPool.SetBounds(cam.BoundsMin(), cam.BoundsMax());
-        }
+          if (Screen.orientation != orientation) {
+               orientation = Screen.orientation;
+               rockPool.SetBounds(cam.BoundsMin(), cam.BoundsMax());
+          }
 #endif
-    }
+     }
 
-    public void PauseMenuButton() {
+     public void PauseMenuButton() {
      
-        pauseMenuUI.SetActive(true);
-        pauseButton.SetActive(false);
-        Time.timeScale = 0.0f;
+          pauseMenuUI.SetActive(true);
+          pauseButton.SetActive(false);
+          Time.timeScale = 0.0f;
 
-        inputMan.SetPaused(true);
+          inputMan.SetPaused(true);
        
-        //stop physics for rocks
-        foreach(GameObject rock in rockPool.activeRocks) {
-            rock.GetComponent<Rock>().SetPaused(true);
-        }
+          //stop physics for rocks
+          foreach(GameObject rock in rockPool.activeRocks) {
+               rock.GetComponent<Rock>().SetPaused(true);
+          }
         
-    }
+     }
 
-    public void ContinueButton() {
-        pauseMenuUI.SetActive(false);
-        pauseButton.SetActive(true);
-        Time.timeScale = 1.0f;
+     public void ContinueButton() {
+          pauseMenuUI.SetActive(false);
+          pauseButton.SetActive(true);
+          Time.timeScale = 1.0f;
 
-        inputMan.SetPaused(false);
-        //restart physics for rocks
-        foreach (GameObject rock in rockPool.activeRocks) {
-            rock.GetComponent<Rock>().SetPaused(false);
-        }
-    }
+          inputMan.SetPaused(false);
+          //restart physics for rocks
+          foreach (GameObject rock in rockPool.activeRocks) {
+               rock.GetComponent<Rock>().SetPaused(false);
+          }
+     }
 
-    // Pass in 0 for Restart or 1 for Quit: Important for YesButton 
-    public void RestartOrQuitButton(int buttonID) {
-        gameOverPanel.SetActive(false);
-        restartButton.SetActive(false);
-        quitButton.SetActive(false);
-        continueButton.SetActive(false);
-        yesButton.SetActive(true);
-        noButton.SetActive(true);
-        buttonId = buttonID;
-    }
+     // Pass in 0 for Restart or 1 for Quit: Important for YesButton 
+     public void RestartOrQuitButton(int buttonID) {
+          gameOverPanel.SetActive(false);
+          restartButton.SetActive(false);
+          quitButton.SetActive(false);
+          continueButton.SetActive(false);
+          yesButton.SetActive(true);
+          noButton.SetActive(true);
+          buttonId = buttonID;
+     }
 
-    public void NoButton() {
-        if (!gameOver)
-            continueButton.SetActive(true);
-        else
-            gameOverPanel.SetActive(true);
+     public void NoButton() {
+          if (!gameOver)
+               continueButton.SetActive(true);
+          else
+               gameOverPanel.SetActive(true);
 
-        restartButton.SetActive(true);
-        quitButton.SetActive(true);
-        yesButton.SetActive(false);
-        noButton.SetActive(false);
-    }
+          restartButton.SetActive(true);
+          quitButton.SetActive(true);
+          yesButton.SetActive(false);
+          noButton.SetActive(false);
+     }
 
-    public void YesButton() {
-        switch (buttonId) {
+     public void YesButton() {
+          switch (buttonId) {
 
-            case 0:     //Restart the game
-            SceneManager.LoadScene(0, LoadSceneMode.Single);
-            break;
+               case 0:     //Restart the game
+               SceneManager.LoadScene(0, LoadSceneMode.Single);
+               break;
 
-            case 1:     //Quit the game normally
+               case 1:     //Quit the game normally
 #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
+               UnityEditor.EditorApplication.isPlaying = false;
 #else
-            Application.Quit(0);
+               Application.Quit(0);
 #endif
-            break;
+               break;
 
-            default:    //Quit because error
-            Application.Quit(-1);
-            break;
-        }
-    }
+               default:    //Quit because error
+               Application.Quit(-1);
+               break;
+          }
+     }
 
-    public void IncrementScore() {
-        score ++;
-        scoreUI.text = score.ToString();
-        gameOverScore.text = score.ToString();
+     public void IncrementScore() {
 
-        //More Rocks!
-        if (Mathf.Log(score, 2) % 1 == 0) {
-            rockPool.IncreaseSpeed();
-            Debug.Log("Increasing Speed");
-        }
+          score ++;
+          scoreUI.text = score.ToString();
+          gameOverScore.text = score.ToString();
 
-        //Speed up!
-        if(score % 25 == 0) {
-            rockPool.IncreaseDifficulty();
-            Debug.Log("Increasing Difficulty");
-        }
+          //More Rocks!
+          if (Mathf.Log(score, 2) % 1 == 0) {
+               rockPool.IncreaseSpeed();
+               Debug.Log("Increasing Speed");
+          }
 
-        //Gain 1 hp up to three every 100 points
-        if(score % 100 == 0 && playerHp < 3) {
-            hpUI[playerHp].SetActive(true);
-            playerHp++;
-        }
-    }
+          //Speed up!
+          if(score % (25 + scoreInc) == 0 
+               && prevScore + scoreInc < score ) {
 
-    public void MissedRock() {
+               rockPool.IncreaseDifficulty();
+               Debug.Log("Increasing Difficulty");
+               scoreInc++;
+               prevScore = score;
+          }
 
-        playerHp -= 1;
-        if (playerHp >= 0)
-            hpUI[playerHp].SetActive(false);
+          //Gain 1 hp up to three every 100 points
+          if(score % 100 == 0 && playerHp < 3) {
+               hpUI[playerHp].SetActive(true);
+               playerHp++;
+          }
 
-        if (playerHp <= 0)
-            GameOver();
+          
+     }
+
+     public void MissedRock() {
+
+          playerHp -= 1;
+          if (playerHp >= 0)
+               hpUI[playerHp].SetActive(false);
+
+          if (playerHp <= 0)
+               GameOver();
         
-    }
+     }
 
-    public void GainHP() {
+     public void GainHP() {
 
-    }
+     }
 
-    private void GameOver() {
-        gameOver = true;
-        PauseMenuButton();
-        GameObject.Find("ScorePanel").gameObject.SetActive(false);
-        GameObject.Find("Hearts").gameObject.SetActive(false);
-        continueButton.SetActive(false);
-        gameOverPanel.SetActive(true);
+     private void GameOver() {
+
+          gameOver = true;
+          PauseMenuButton();
+          GameObject.Find("ScorePanel").gameObject.SetActive(false);
+          GameObject.Find("Hearts").gameObject.SetActive(false);
+          continueButton.SetActive(false);
+          gameOverPanel.SetActive(true);
        
-
-    }
+     }
 }
