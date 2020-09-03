@@ -67,6 +67,7 @@ public class GameManager : MonoBehaviour
                rockPool.SetBounds(cam.BoundsMin(), cam.BoundsMax());
           }
 #endif
+               
      }
 
      public void PauseMenuButton() {

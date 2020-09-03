@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Hosting;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour {
      private bool paused = false;
+
      [SerializeField] GameManager gameManager;
 
      // Start is called before the first frame update
@@ -18,14 +20,15 @@ public class InputManager : MonoBehaviour {
 
      private void TouchController() {
 
+          // Normal Gameplay
           if (!paused) {
+
 
                // Mouse Input
                if (Input.touchCount == 0 && Input.GetMouseButtonUp(0)) {
 
                     Vector3 clickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                     RaycastHit2D hit = Physics2D.Raycast(clickPos, Vector2.zero);
-
 
                     if (hit.collider != null && hit.collider.tag == "Rock") {
 
@@ -47,7 +50,6 @@ public class InputManager : MonoBehaviour {
                          Vector3 touchPos = Camera.main.ScreenToWorldPoint(Input.GetTouch(i).position);
                          RaycastHit2D hit = Physics2D.Raycast(touchPos, Vector2.zero);
 
-
                          if (hit.collider != null && hit.collider.tag == "Rock") {
 
                               Rock rock = hit.collider.gameObject.GetComponent<Rock>();
@@ -60,6 +62,19 @@ public class InputManager : MonoBehaviour {
                     }
                          
                }
+
+               // Check for back button input to pause the game
+               if (Application.platform == RuntimePlatform.Android) 
+                    if(InputManager.GetKeyDown(Keycode.Escape))
+                         gameManager.PauseMenuButton();
+
+          
+          // Gameplay is paused
+          } else {
+
+               // Ask to exit game if on android
+               if (Application.platform == RuntimePlatform.Android) 
+                    if (Input.GetKeyDown(KeyCode.Escape)) gameManager.RestartOrQuitButton(1);
 
           }
      }
