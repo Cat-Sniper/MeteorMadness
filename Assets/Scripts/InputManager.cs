@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.Hosting;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour {
@@ -65,7 +64,7 @@ public class InputManager : MonoBehaviour {
 
                // Check for back button input to pause the game
                if (Application.platform == RuntimePlatform.Android) 
-                    if(InputManager.GetKeyDown(Keycode.Escape))
+                    if(Input.GetKeyDown(Keycode.Escape))
                          gameManager.PauseMenuButton();
 
           
