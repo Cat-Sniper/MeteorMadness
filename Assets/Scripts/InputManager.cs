@@ -64,7 +64,7 @@ public class InputManager : MonoBehaviour {
 
                // Check for back button input to pause the game
                if (Application.platform == RuntimePlatform.Android) 
-                    if(Input.GetKeyDown(Keycode.Escape))
+                    if(Input.GetKeyDown(KeyCode.Escape))
                          gameManager.PauseMenuButton();
 
           
