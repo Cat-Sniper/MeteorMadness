@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour {
      private bool paused = false;
-     private bool canClick = true;
      [SerializeField] GameManager gameManager;
 
      // Start is called before the first frame update
@@ -21,28 +20,29 @@ public class InputManager : MonoBehaviour {
 
           if (!paused) {
 
-               if (canClick) {
+               // Mouse Input
+               if (Input.touchCount == 0 && Input.GetMouseButtonUp(0)) {
 
-                    if (Input.touchCount == 0 && Input.GetMouseButtonUp(0)) {
-
-                         Vector3 clickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                         RaycastHit2D hit = Physics2D.Raycast(clickPos, Vector2.zero);
+                    Vector3 clickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    RaycastHit2D hit = Physics2D.Raycast(clickPos, Vector2.zero);
 
 
-                         if (hit.collider != null && hit.collider.tag == "Rock") {
+                    if (hit.collider != null && hit.collider.tag == "Rock") {
 
-                              Rock rock = hit.collider.gameObject.GetComponent<Rock>();
+                         Rock rock = hit.collider.gameObject.GetComponent<Rock>();
 
-                              if (rock.canBeClicked) {
-                                   gameManager.IncrementScore();
-                                   rock.DisableRock();
-                                   //canClick = false;
-                              }
+                         if (rock.canBeClicked) {
+                              gameManager.IncrementScore();
+                              rock.DisableRock();
                          }
                     }
+               }
 
 
-                    for (int i = 0; i < Input.touchCount; i++) {
+               // Touch Input
+               for (int i = 0; i < Input.touchCount; i++) {
+
+                    if(Input.GetTouch(i).phase == TouchPhase.Began) {
 
                          Vector3 touchPos = Camera.main.ScreenToWorldPoint(Input.GetTouch(i).position);
                          RaycastHit2D hit = Physics2D.Raycast(touchPos, Vector2.zero);
@@ -55,13 +55,12 @@ public class InputManager : MonoBehaviour {
                               if (rock.canBeClicked) {
                                    gameManager.IncrementScore();
                                    rock.DisableRock();
-                                   //canClick = false;
                               }
                          }
                     }
+                         
                }
 
-              
           }
      }
 
