@@ -91,6 +91,7 @@ public class GameManager : MonoBehaviour
           Time.timeScale = 1.0f;
 
           inputMan.SetPaused(false);
+
           //restart physics for rocks
           foreach (GameObject rock in rockPool.activeRocks) {
                rock.GetComponent<Rock>().SetPaused(false);

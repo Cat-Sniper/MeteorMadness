@@ -13,7 +13,7 @@ public class Rock : MonoBehaviour {
      private bool isDying = false;
      private float timeToDeath = 1f;
      private float deathTimer = 0f;
-     private bool snitched = false;
+     private bool snitched = false;                         // flag for when the rock factory & game manager have been told that the player has missed a rock
 
      public GameObject smokePrefab;
      public GameObject destructionPrefab;
@@ -56,7 +56,7 @@ public class Rock : MonoBehaviour {
 
 
      // Update is called once per frame
-     void Update() {
+     public virtual void Update() {
 
           if (!paused) {
 
@@ -118,8 +118,8 @@ public class Rock : MonoBehaviour {
 
                if (gameObject.tag == "Rock") {
 
-                    
                     spr.color = Color.white;
+                    rockFactory.activeRocks.Remove(gameObject);
                     gameObject.SetActive(false);
                 
                } else {

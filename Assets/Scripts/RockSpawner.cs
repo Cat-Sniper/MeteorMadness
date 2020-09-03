@@ -6,7 +6,7 @@ public class RockSpawner : MonoBehaviour {
 
      // Constants -- Serialized for editor debugging
      [SerializeField] private const float SPEEDINCREMENT = 0.2f;
-     [SerializeField] private const float UPPERMULTIPLIER = 1.25f;
+     [SerializeField] private const float UPPERMULTIPLIER = 1.5f;
      [SerializeField] private const float LOWERMULTIPLIER = 0.5f;
      [SerializeField] private const float MAXPADDING = SPEEDINCREMENT / 2;
      [SerializeField] private const float MINPADDING = 0.75f;
