@@ -1,7 +1,19 @@
-﻿using System.Collections;
+﻿/*   
+     CameraExtension.cs
+     ------------------------------
+     Author: Michael Ward
+     Last Edited: September 4, 2020
+*/
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Handles the resizing of the camera for when an android device changes orientation.
+/// 
+/// NOTE: currently placeholder, doesn't do anything at all as of now...
+/// </summary>
 public static class CameraExtension
 {
     public static Vector2 Extents(this Camera camera) {

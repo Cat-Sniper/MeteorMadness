@@ -1,7 +1,17 @@
-﻿using System.Collections;
+﻿/*   
+     InputManager.cs
+     ------------------------------
+     Author: Michael Ward
+     Last Edited: September 4, 2020
+*/
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Handler for player input, whether it is mouse clicks or touches on an andriod device.
+/// </summary>
 public class InputManager : MonoBehaviour {
      private bool paused = false;
 

@@ -1,8 +1,23 @@
-﻿using System.Collections;
+﻿/*   
+     Rock.cs
+     ------------------------------
+     Author: Michael Ward
+     Last Edited: September 4, 2020
+*/
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// The basic rock type - a solid foundation for all other rocks (hehe).
+/// </summary>
+/// <remarks>
+/// Right now there are no physics, the rocks simply translate 'down' from where ever they spawn.
+/// (I do plan on having physics drive the rocks, specifically to bounce the rocks off the side of the screen and/or have 'Splitee' rocks initially impulse upwards in some direction)
+/// </remarks>
 public class Rock : MonoBehaviour {
+
      private bool paused = false;
      public bool canBeClicked = true;
      private bool rotateRight = true;
@@ -26,17 +41,16 @@ public class Rock : MonoBehaviour {
     
 
      // Start is called before the first frame update
-     void Awake() {
+     protected virtual void Awake() {
 
           rockFactory = GameObject.Find("RockFactory").GetComponent<RockSpawner>();
           gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
           spr = gameObject.GetComponentInChildren<SpriteRenderer>();
-
+ 
      }
 
-     void OnEnable() {
+     protected virtual void OnEnable() {
 
-     //     currentLerpTime = 0f;
           smokeEffect = null;
           destructionEffect = null;
           canBeClicked = true;
@@ -56,7 +70,7 @@ public class Rock : MonoBehaviour {
 
 
      // Update is called once per frame
-     public virtual void Update() {
+     protected virtual void Update() {
 
           if (!paused) {
 
@@ -90,7 +104,7 @@ public class Rock : MonoBehaviour {
 
 
     //Particle effects and slowdown of rock on entering lava - can no longer be clicked on
-     void OnTriggerEnter2D(Collider2D col) {
+     protected virtual void OnTriggerEnter2D(Collider2D col) {
 
           if (col.gameObject.tag == "Lava") {
 
@@ -112,7 +126,7 @@ public class Rock : MonoBehaviour {
      }
 
      //Destroy the rock once it has left the screen
-     void OnTriggerExit2D(Collider2D col) {
+     protected virtual void OnTriggerExit2D(Collider2D col) {
 
           if (col.gameObject.tag == "Lava") {
 
@@ -130,7 +144,7 @@ public class Rock : MonoBehaviour {
           }
      }
 
-     public void DisableRock() {
+     public virtual void DisableRock() {
 
           rockFactory.activeRocks.Remove(gameObject);
           rockFactory.AddRockToQueue();
@@ -142,16 +156,8 @@ public class Rock : MonoBehaviour {
         
      }
 
-     void OnDisable() {
-
-     }
-
      public void SetSpeed(float spd) { moveDistance = spd; }
-
-     public void SetPaused(bool psd) {
-          paused = psd;
-     }
-
+     public void SetPaused(bool psd) { paused = psd; }
      public GameObject GetSpriteObj() { return spr.gameObject; }
 
 }

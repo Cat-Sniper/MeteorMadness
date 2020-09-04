@@ -1,7 +1,27 @@
-﻿using System.Collections;
+﻿/*   
+     RockSpawner.cs
+     ------------------------------
+     Author: Michael Ward
+     Last Edited: September 4, 2020
+*/
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Factory that spawns rocks when able to (number of active rocks on screen and in queue is determined by the score). 
+/// </summary>
+/// 
+/// <remarks>
+/// <list type="bullet">
+/// 
+/// <item> Different types of rocks will start spawning at certain thresholds. </item>
+/// <item> Rocks are given a random speed on an increasing interval as the game progresses. </item>
+/// <item> Rock types currently spawned in this iteration: | Normal Rocks | </item>
+/// 
+/// </list>
+/// </remarks>
 public class RockSpawner : MonoBehaviour {
 
      // Constants -- Serialized for editor debugging
@@ -9,24 +29,26 @@ public class RockSpawner : MonoBehaviour {
      [SerializeField] private const float UPPERMULTIPLIER = 1.5f;
      [SerializeField] private const float LOWERMULTIPLIER = 0.5f;
      [SerializeField] private const float MAXPADDING = SPEEDINCREMENT / 2;
-     [SerializeField] private const float MINPADDING = 0.75f;
-
-     [SerializeField] private float speed = 2f;
-     private float multiplierPadding = 0f;
-    
-     public List<GameObject> rockPool;
-     public List<GameObject> activeRocks;
-     public GameObject rockPrefab;
-     public int rocksToPool;
-     public bool shouldExpandPool = true;
-
-     private bool canSpawnRocks = true;
+     [SerializeField] private const float MINPADDING = 0.8f;
+     [SerializeField] private float speed = 1.8f;
      private float minPosX = 0;
      private float maxPosX = 0;
      private float paddingX = 0.5f;
      public float rockSpawnTimer = 0.75f;
      private float rockTimer = 0.0f;
-     private int rocksQueued = 1;        // How many rocks are ready to be spawned
+     private float multiplierPadding = 0f;
+    
+     public List<GameObject> rockPool;
+     public List<GameObject> activeRocks;
+
+     public GameObject rockPrefab;
+
+     [SerializeField] private int rocksQueued = 1;        // How many rocks are ready to be spawned
+     public int rocksToPool;
+
+     public bool shouldExpandPool = true;
+     private bool canSpawnRocks = true;
+
     
 
      // Start is called before the first frame update
@@ -99,7 +121,7 @@ public class RockSpawner : MonoBehaviour {
                newRock.GetComponent<Rock>().GetSpriteObj().transform.rotation = Quaternion.Euler(0, 0, rot);
           }
 
-          float variantSpeed = Random.Range(MINPADDING, speed + MAXPADDING);
+          float variantSpeed = Random.Range(speed - MINPADDING, speed + MAXPADDING);
 
           // Random multiplier applied as special case: only the slowest rocks get a chance at being really fast for the current stage
           if (variantSpeed <= 1.0f + multiplierPadding)

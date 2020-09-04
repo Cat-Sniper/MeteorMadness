@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5056023197273009832}
   - component: {fileID: 2110452553217064663}
   - component: {fileID: 8576008241163904378}
+  - component: {fileID: -1306518481420162017}
   m_Layer: 0
   m_Name: RockDestruction
   m_TagString: Untagged
@@ -116,7 +117,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1.5
+      scalar: 1.23
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -4967,3 +4968,15 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &-1306518481420162017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4470547082236100284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aac5b2ee853a11242bd5a900e7e931e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
