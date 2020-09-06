@@ -13,17 +13,7 @@ using UnityEngine;
 /// A rock created when a 'Splitter' rock is destroyed by the player.
 /// This version behaves similiarly to a normal rock but with a different sprite.
 /// </summary>
-public class Splitee : MonoBehaviour
+public class Splitee : Rock
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+ 
 }

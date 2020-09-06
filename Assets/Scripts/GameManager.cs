@@ -80,6 +80,7 @@ public class GameManager : MonoBehaviour
           playerHp = 3;
           gameOver = false;
 
+          AudioListener.pause = false;
           song.ignoreListenerPause = true;
      }
 

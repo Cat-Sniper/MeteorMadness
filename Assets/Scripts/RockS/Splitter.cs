@@ -16,13 +16,37 @@ using UnityEngine;
 /// </summary>
 public class Splitter : Rock {
 
-    // Start is called before the first frame update
-    void Start() {
-        
-    }
+     [SerializeField] private GameObject spliteePrefab;
+     private GameObject rightSplitee;
+     private GameObject leftSplitee;
 
-    // Update is called once per frame
-    protected override void Update() {
+
+     // Start is called before the first frame update
+     void Start() {
         
-    }
+     }
+
+     public override void DisableRock() {
+
+          Vector3 leftPosition = transform.position;
+          Vector3 rightPosition = transform.position;
+          leftPosition.x -= 1f;
+          rightPosition.x += 1f;
+          
+          rockFactory.activeRocks.Remove(gameObject);
+
+          destructionEffect = (GameObject)Instantiate(destructionPrefab);
+          destructionEffect.transform.position = transform.position;
+          
+          rightSplitee = (GameObject)Instantiate(spliteePrefab);
+          rightSplitee.transform.position = rightPosition;
+          
+          leftSplitee = (GameObject)Instantiate(spliteePrefab);
+          leftSplitee.transform.position = leftPosition;
+
+          gameObject.SetActive(false);
+          
+     }
+
+
 }

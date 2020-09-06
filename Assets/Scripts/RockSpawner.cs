@@ -24,13 +24,15 @@ using UnityEngine;
 /// </remarks>
 public class RockSpawner : MonoBehaviour {
 
-     // Constants -- Serialized for editor debugging
-     [SerializeField] private const float SPEEDINCREMENT = 0.2f;
-     [SerializeField] private const float UPPERMULTIPLIER = 1.5f;
-     [SerializeField] private const float LOWERMULTIPLIER = 0.5f;
-     [SerializeField] private const float MAXPADDING = SPEEDINCREMENT / 2;
-     [SerializeField] private const float MINPADDING = 0.8f;
+     // Constants
+     private const float SPEEDINCREMENT = 0.15f;
+     private const float UPPERMULTIPLIER = 2f;
+     private const float LOWERMULTIPLIER = 0.5f;
+     private const float MAXPADDING = SPEEDINCREMENT * 2;
+     private const float MINPADDING = 0.6f;
+     private const float MINSPEED = 0.5f;
      [SerializeField] private float speed = 1.8f;
+     
      private float minPosX = 0;
      private float maxPosX = 0;
      private float paddingX = 0.5f;
@@ -59,6 +61,7 @@ public class RockSpawner : MonoBehaviour {
           rockPool = new List<GameObject>();
           for (int i = 0; i < rocksToPool; i++) {
                GameObject obj = (GameObject)Instantiate(rockPrefab);
+               obj.GetComponentInChildren<SpriteRenderer>().sortingOrder = rockPool.Count;                    // give a sorting order to the pooled object to avoid graphic artifacts
                obj.SetActive(false);
                obj.transform.parent = gameObject.transform;
                rockPool.Add(obj);
@@ -76,7 +79,9 @@ public class RockSpawner : MonoBehaviour {
 
           if (shouldExpandPool) {
                GameObject newRock = (GameObject)Instantiate(rockPrefab);
-            
+
+               newRock.GetComponentInChildren<SpriteRenderer>().sortingOrder = rockPool.Count;
+
                newRock.SetActive(false);
                newRock.transform.parent = gameObject.transform;
                rockPool.Add(newRock);
@@ -112,26 +117,50 @@ public class RockSpawner : MonoBehaviour {
      //Logic for spawning a rock from the rock object pool
      public void CreateRock()
      {
-
+          
           GameObject newRock = GetPooledObject();
           if (newRock != null) {
+
+               Rock rockScript = newRock.GetComponent<Rock>();
+
+               // Random rotation direction
+               #region RandRot
                float rot = GetRandomRotation();
                newRock.transform.position = GetNewSpawnLocation();
                newRock.transform.rotation = Quaternion.Euler(0, 0, 0);
-               newRock.GetComponent<Rock>().GetSpriteObj().transform.rotation = Quaternion.Euler(0, 0, rot);
+               rockScript.GetSpriteObj().transform.rotation = Quaternion.Euler(0, 0, rot);
+               #endregion
+
+               // Random Color
+               #region RandCol
+               float v = Random.Range(0.6f, 1f);
+               Color variantColor = new Color(v, v, v, 1f);
+               rockScript.GetSpriteObj().GetComponent<SpriteRenderer>().color = variantColor;
+               #endregion
+
+               // Random speed
+               #region RandSpeed
+
+               float variantSpeed = Random.Range(speed - MINPADDING, speed + MAXPADDING);
+
+               // Random multiplier applied as special case: only the slowest rocks get a chance at being really fast for the current stage
+               if (variantSpeed <= MINSPEED + multiplierPadding) {
+
+                    variantSpeed = Random.Range(LOWERMULTIPLIER, UPPERMULTIPLIER) * speed;
+
+                    if (variantSpeed <= MINSPEED) variantSpeed = MINSPEED;
+
+                    Debug.Log("multiplier activated");
+               }
+
+               rockScript.SetSpeed(variantSpeed);
+
+               #endregion               
+
+               activeRocks.Add(newRock);
+               newRock.SetActive(true);
+
           }
-
-          float variantSpeed = Random.Range(speed - MINPADDING, speed + MAXPADDING);
-
-          // Random multiplier applied as special case: only the slowest rocks get a chance at being really fast for the current stage
-          if (variantSpeed <= 1.0f + multiplierPadding)
-               variantSpeed = Random.Range(LOWERMULTIPLIER, UPPERMULTIPLIER) * variantSpeed;
-
-          newRock.GetComponent<Rock>().SetSpeed(variantSpeed);
-          activeRocks.Add(newRock);
-          newRock.SetActive(true);
-        
-       
      }
 
      public void IncreaseSpeed() { speed += SPEEDINCREMENT; multiplierPadding += SPEEDINCREMENT; }
@@ -168,6 +197,7 @@ public class RockSpawner : MonoBehaviour {
      }
 
      public void AddRockToQueue() { rocksQueued += 1; }
+     
      public Vector2 GetBounds() { return new Vector2(minPosX, maxPosX); }
 
 }

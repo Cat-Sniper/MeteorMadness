@@ -23,6 +23,7 @@ public class Rock : MonoBehaviour {
      private bool rotateRight = true;
      private bool canRotate = true;
      [SerializeField] private float moveDistance = 1f;
+     [SerializeField] private float rotSpeed;
 
      // Death Timer
      private bool isDying = false;
@@ -34,10 +35,12 @@ public class Rock : MonoBehaviour {
      public GameObject destructionPrefab;
 
      private GameObject smokeEffect;
-     private GameObject destructionEffect;
-     private RockSpawner rockFactory;
-     private GameManager gameManager;
-     private SpriteRenderer spr;
+     protected GameObject destructionEffect;
+     protected RockSpawner rockFactory;
+     protected GameManager gameManager;
+     protected SpriteRenderer spr;
+
+     private Color spriteTint;
     
 
      // Start is called before the first frame update
@@ -82,10 +85,20 @@ public class Rock : MonoBehaviour {
                #endregion
 
                #region ROTATION
+
+               rotSpeed = moveDistance * 0.05f;
+
                if (rotateRight) {
-                    spr.transform.Rotate(Vector3.forward * moveDistance * 0.1f);
-               } else
-                    spr.transform.Rotate(Vector3.back * moveDistance * 0.1f);
+
+                    spr.transform.Rotate(Vector3.forward * rotSpeed);
+                    spr.flipY = true;
+
+               } else {
+
+                    spr.transform.Rotate(Vector3.back * rotSpeed);
+                    spr.flipY = false;
+               }
+
                #endregion
 
                if (isDying && !snitched)
@@ -156,8 +169,9 @@ public class Rock : MonoBehaviour {
         
      }
 
-     public void SetSpeed(float spd) { moveDistance = spd; }
-     public void SetPaused(bool psd) { paused = psd; }
-     public GameObject GetSpriteObj() { return spr.gameObject; }
+     public void SetSpeed(float spd)    { moveDistance = spd; }
+     public void SetPaused(bool psd)    { paused = psd; }
+     
+     public GameObject GetSpriteObj()   { return spr.gameObject; }
 
 }

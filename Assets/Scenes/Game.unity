@@ -1352,13 +1352,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 016adaaac4d44b14387b86b336f1c748, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2
-  rockSpawnTimer: 0.5
+  speed: 1
+  rockSpawnTimer: 0.4
   rockPool: []
   activeRocks: []
   rockPrefab: {fileID: 4996732686831541839, guid: 650becdb9738ee844868f0f6d657c485,
     type: 3}
-  rocksQueued: 5
+  rocksQueued: 3
   rocksToPool: 10
   shouldExpandPool: 1
 --- !u!1 &789694000
