@@ -18,29 +18,31 @@ using UnityEngine;
 /// </remarks>
 public class Rock : MonoBehaviour {
 
-     private bool paused = false;
+     public int ID = 0;                      // Identifies the type of rock to the rock spawner.
+
+     protected bool paused = false;
      public bool canBeClicked = true;
-     private bool rotateRight = true;
-     private bool canRotate = true;
-     [SerializeField] private float moveDistance = 1f;
-     [SerializeField] private float rotSpeed;
+     protected bool rotateRight = true;
+     protected bool canRotate = true;
+     [SerializeField] protected float moveDistance = 1f;
+     [SerializeField] protected float rotSpeed;
 
      // Death Timer
-     private bool isDying = false;
-     private float timeToDeath = 1f;
-     private float deathTimer = 0f;
-     private bool snitched = false;                         // flag for when the rock factory & game manager have been told that the player has missed a rock
+     protected bool isDying = false;
+     protected float timeToDeath = 1f;
+     protected float deathTimer = 0f;
+     protected bool snitched = false;                         // flag for when the rock factory & game manager have been told that the player has missed a rock
 
      public GameObject smokePrefab;
      public GameObject destructionPrefab;
 
-     private GameObject smokeEffect;
+     protected GameObject smokeEffect;
      protected GameObject destructionEffect;
      protected RockSpawner rockFactory;
      protected GameManager gameManager;
      protected SpriteRenderer spr;
 
-     private Color spriteTint;
+     protected Color spriteTint;
     
 
      // Start is called before the first frame update
@@ -75,88 +77,108 @@ public class Rock : MonoBehaviour {
      // Update is called once per frame
      protected virtual void Update() {
 
+          float dt= Time.deltaTime;            // Note that Timescale == 0 when the game is paused.
           if (!paused) {
+          
+               
 
-               #region MOVEMENT 
-               Vector2 prevPos = transform.position;
-               float dT = Time.deltaTime;
-
-               transform.Translate(Vector3.down * dT * moveDistance);
-               #endregion
-
-               #region ROTATION
-
-               rotSpeed = moveDistance * 0.05f;
-
-               if (rotateRight) {
-
-                    spr.transform.Rotate(Vector3.forward * rotSpeed);
-                    spr.flipY = true;
-
-               } else {
-
-                    spr.transform.Rotate(Vector3.back * rotSpeed);
-                    spr.flipY = false;
-               }
-
-               #endregion
-
-               if (isDying && !snitched)
-                    if (deathTimer >= timeToDeath) {
-
-                         gameManager.MissedRock();
-                         rockFactory.AddRockToQueue();
-                         snitched = true;
-
-                    } else 
-                         deathTimer += dT;
-                    
-                         
+               Movement(dt);
+               Rotation();
+               DeathCheck(dt);
+               
           }
      }     
+     
+     /// <summary>
+     /// Handles movement of the rock - Base rock just moves down from current position at a speed given by RockSpawner
+     /// </summary>
+     protected virtual void Movement(float dt) {
+
+          Vector2 prevPos = transform.position;
+          transform.Translate(Vector3.down * dt * moveDistance);
+
+     }
+     
+     /// <summary>
+     /// Handles the rotation of the sprite - Base rock rotates in the direction it is told by RockSpawner and at a rate relative to movement speed. 
+     /// Flips sprite depending on direction.
+     /// </summary>
+     protected virtual void Rotation() {
+
+          rotSpeed = moveDistance * 0.1f;
+
+          if (rotateRight) {
+
+               spr.transform.Rotate(Vector3.forward * rotSpeed);
+               spr.flipY = false;
+
+          } else {
+
+               spr.transform.Rotate(Vector3.back * rotSpeed);
+               spr.flipY = true;
+          }
+     }
+     
+
+     /// <summary>
+     /// Handles the death of the Rock - Base Rock will tell the game manager to update the score by one, and add another rock to the queue for spawning.
+     /// </summary>
+     public virtual void DeathCheck(float dt){
+
+          // Snitched is a flag reset on enable so that we only update the game manager and rock factory once per instantiation.
+          if (isDying && !snitched){
+               if (deathTimer >= timeToDeath) {
+
+                    gameManager.MissedRock();
+                    rockFactory.AddRockToQueue();
+                    snitched = true;
+
+               } else deathTimer += dt;
+               
+          }             
+
+     }
 
 
-    //Particle effects and slowdown of rock on entering lava - can no longer be clicked on
-     protected virtual void OnTriggerEnter2D(Collider2D col) {
+    /// <summary> 
+    /// The rock will start to 'burn' up and spawn a smoke effect once it hits the 'lava' trigger area at the bottom of the screen.
+    /// This lava is the lose condition for the player - once a rock hits it, the rock can no longer be destroyed, the player loses a life, and a timer is started to cleanup the rock offscreen.
+    /// </summary>
+    /// <param name="col">The Collider2D object handed by Unity</param>
+     public virtual void OnTriggerEnter2D(Collider2D col) {
 
           if (col.gameObject.tag == "Lava") {
 
-               if (gameObject.tag == "Rock") {
+               canBeClicked = false;
+               spr.color = Color.red;
+               moveDistance = 0.2f;
+               smokeEffect = (GameObject)Instantiate(smokePrefab);
+               smokeEffect.transform.position = transform.position;
 
-                     canBeClicked = false;
-                     spr.color = Color.red;
-                     moveDistance = 0.2f;
-                     smokeEffect = (GameObject)Instantiate(smokePrefab);
-                     smokeEffect.transform.position = transform.position;
+               // Start death timer?
+               isDying = true;
 
-                    // Start death timer?
-                    isDying = true;
-
-               } else {
-
-               }
           }
      }
 
-     //Destroy the rock once it has left the screen
-     protected virtual void OnTriggerExit2D(Collider2D col) {
+     /// <summary>
+     /// Clean up for when the rock has left the screen/lava trigger area.
+     /// </summary>
+     /// <param name="col"> Collider2D object handed by Unity</param>
+     public virtual void OnTriggerExit2D(Collider2D col) {
 
           if (col.gameObject.tag == "Lava") {
-
-               if (gameObject.tag == "Rock") {
 
                     spr.color = Color.white;
                     rockFactory.activeRocks.Remove(gameObject);
                     gameObject.SetActive(false);
-                
-               } else {
-
-                    DisableRock();
-
-               }
+          
           }
      }
-
+     
+     /// <summary>
+     /// Clean up for when the rock has been destroyed by the player. Spawn a destruction effect for positive reinforcement
+     /// </summary>
      public virtual void DisableRock() {
 
           rockFactory.activeRocks.Remove(gameObject);
@@ -172,6 +194,6 @@ public class Rock : MonoBehaviour {
      public void SetSpeed(float spd)    { moveDistance = spd; }
      public void SetPaused(bool psd)    { paused = psd; }
      
-     public GameObject GetSpriteObj()   { return spr.gameObject; }
+     public SpriteRenderer GetSpriteRenderer()   { return spr; }
 
 }

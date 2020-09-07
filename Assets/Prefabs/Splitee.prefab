@@ -93,6 +93,7 @@ GameObject:
   - component: {fileID: 8334368285521664450}
   - component: {fileID: 3698378717581324353}
   - component: {fileID: 586235063864290750}
+  - component: {fileID: 6921358887671946893}
   m_Layer: 0
   m_Name: Splitee
   m_TagString: Rock
@@ -127,6 +128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4d1ea3b4a1797d48a09eed4c439e347, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ID: -1
   canBeClicked: 1
   moveDistance: 1
   rotSpeed: 0
@@ -150,3 +152,24 @@ CircleCollider2D:
   m_Offset: {x: -0.000000029802322, y: 0}
   serializedVersion: 2
   m_Radius: 0.28227815
+--- !u!50 &6921358887671946893
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6077419434033397605}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 10
+  m_LinearDrag: 2
+  m_AngularDrag: 1.5
+  m_GravityScale: 0.5
+  m_Material: {fileID: 0}
+  m_Interpolate: 1
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0

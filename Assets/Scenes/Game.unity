@@ -1356,8 +1356,9 @@ MonoBehaviour:
   rockSpawnTimer: 0.4
   rockPool: []
   activeRocks: []
-  rockPrefab: {fileID: 4996732686831541839, guid: 650becdb9738ee844868f0f6d657c485,
-    type: 3}
+  rockPrefabs:
+  - {fileID: 4996732686831541839, guid: 650becdb9738ee844868f0f6d657c485, type: 3}
+  - {fileID: 7397751215347280268, guid: ccfe7807e28679b428ab6f4821fc0a78, type: 3}
   rocksQueued: 3
   rocksToPool: 10
   shouldExpandPool: 1
@@ -3278,7 +3279,7 @@ GameObject:
   - component: {fileID: 2063725050}
   - component: {fileID: 2063725049}
   m_Layer: 0
-  m_Name: Background Image
+  m_Name: Core Game Object
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

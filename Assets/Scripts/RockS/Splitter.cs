@@ -30,19 +30,29 @@ public class Splitter : Rock {
 
           Vector3 leftPosition = transform.position;
           Vector3 rightPosition = transform.position;
+          Vector2 bounds = rockFactory.GetBounds();
+
           leftPosition.x -= 1f;
           rightPosition.x += 1f;
-          
+
+
+          if (leftPosition.x < bounds.x) leftPosition.x = bounds.x;
+          if (rightPosition.x > bounds.y) rightPosition.x = bounds.y;
+
+
           rockFactory.activeRocks.Remove(gameObject);
+          rockFactory.AddRockToQueue();
 
           destructionEffect = (GameObject)Instantiate(destructionPrefab);
           destructionEffect.transform.position = transform.position;
           
           rightSplitee = (GameObject)Instantiate(spliteePrefab);
           rightSplitee.transform.position = rightPosition;
+          rightSplitee.GetComponent<Splitee>().SetSpeed(moveDistance);
           
           leftSplitee = (GameObject)Instantiate(spliteePrefab);
           leftSplitee.transform.position = leftPosition;
+          leftSplitee.GetComponent<Splitee>().SetSpeed(moveDistance);
 
           gameObject.SetActive(false);
           

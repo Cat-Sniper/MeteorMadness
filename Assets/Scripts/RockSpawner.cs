@@ -39,11 +39,23 @@ public class RockSpawner : MonoBehaviour {
      public float rockSpawnTimer = 0.75f;
      private float rockTimer = 0.0f;
      private float multiplierPadding = 0f;
-    
+
+     private int nextRockID = 0;
+
      public List<GameObject> rockPool;
      public List<GameObject> activeRocks;
 
-     public GameObject rockPrefab;
+     /// <summary>
+     /// Holds all the different rock prefabs - Set in unity Editor
+     /// <list type="bullet">
+     /// <item> 0 : Rock (Base) </item>
+     /// <item> 1 : Splitter </item>
+     /// </list>
+     /// </summary>
+     public GameObject[] rockPrefabs;
+     
+   
+
 
      [SerializeField] private int rocksQueued = 1;        // How many rocks are ready to be spawned
      public int rocksToPool;
@@ -59,33 +71,60 @@ public class RockSpawner : MonoBehaviour {
         
           //Object Pool for rocks
           rockPool = new List<GameObject>();
-          for (int i = 0; i < rocksToPool; i++) {
-               GameObject obj = (GameObject)Instantiate(rockPrefab);
-               obj.GetComponentInChildren<SpriteRenderer>().sortingOrder = rockPool.Count;                    // give a sorting order to the pooled object to avoid graphic artifacts
-               obj.SetActive(false);
-               obj.transform.parent = gameObject.transform;
-               rockPool.Add(obj);
-          }
+          
+          // Pool all the different types of rocks found in rockPrefabs
+          for(int i = 0; i < rockPrefabs.Length; i++){
 
+               // Initialize basic rock pool. These are the most numerous so it makes sense to pool a bunch of these.
+               if( i == 0 ) {
+
+                    for (int j = 0; j < rocksToPool; j++) {
+
+                         AddRockToPool(i);
+
+                    }
+
+               // Special rocks are less common, will only pool more than one as needed.
+               } else {
+
+                    AddRockToPool(i);
+
+               }
+          }
+         
+         
      }
 
-     //Goes through the current pooled rocks and returns the first inactive one it finds (if any)
-     public GameObject GetPooledObject() {
+     /// <summary>
+     /// Add a new rock of the specified type to the rock pool
+     /// </summary>
+     /// <param name="id"> type of rock - ID in script and index of rockPrefabs.</param>
+     /// <returns></returns>
+     private GameObject AddRockToPool(int id) {
+          GameObject obj = (GameObject)Instantiate(rockPrefabs[id]);                                      // Spawn only the base rock at the start of the game
+          obj.GetComponentInChildren<SpriteRenderer>().sortingOrder = rockPool.Count;                    // give a sorting order to the pooled object to avoid graphic artifacts
+          obj.SetActive(false);
+          obj.transform.parent = gameObject.transform;
+          rockPool.Add(obj);
+          return obj;
+     }
+
+     /// <summary>
+     /// Return an inactive Rock of the specified type from the rock pool, create a new one if there are no available rocks in the pool.
+     /// </summary>
+     /// <param name="rockID"> order in the rockPrefabs container & ID in rock script </param>
+     /// <returns></returns>
+     public GameObject GetPooledObject(int rockID) {
+          
+          
           for (int i = 0; i < rockPool.Count; i++) {
-               if (!rockPool[i].activeInHierarchy) {
+               if (!rockPool[i].activeInHierarchy && rockID == rockPool[i].GetComponent<Rock>().ID) {
                     return rockPool[i];
                }
           }
 
           if (shouldExpandPool) {
-               GameObject newRock = (GameObject)Instantiate(rockPrefab);
-
-               newRock.GetComponentInChildren<SpriteRenderer>().sortingOrder = rockPool.Count;
-
-               newRock.SetActive(false);
-               newRock.transform.parent = gameObject.transform;
-               rockPool.Add(newRock);
-               return newRock;
+               return AddRockToPool(rockID);
 
           } else {
                return null;
@@ -96,6 +135,8 @@ public class RockSpawner : MonoBehaviour {
      void Update()
      {
           rockTimer -= Time.deltaTime;
+
+          
 
           if (rockTimer <= 0)
                canSpawnRocks = true;
@@ -114,30 +155,34 @@ public class RockSpawner : MonoBehaviour {
 
   
 
-     //Logic for spawning a rock from the rock object pool
+     /// <summary>
+     /// Logic for the Rock Factory: gets a rock from the object pool then randomizes its rotation, speed, and color
+     /// </summary>
+     /// <param name="rockID"></param>
      public void CreateRock()
      {
           
-          GameObject newRock = GetPooledObject();
+
+          GameObject newRock = GetPooledObject(nextRockID);
+
+          if (nextRockID != 0) nextRockID = 0;                                       // Reset back to normal rocks after special rock is spawned.
+
           if (newRock != null) {
 
-               Rock rockScript = newRock.GetComponent<Rock>();
+               Rock rockScript = newRock.GetComponent<Rock>();                       // All rocks are derived of the same base class, so we can manipulate their shared properties here with ease.
 
                // Random rotation direction
                #region RandRot
+
                float rot = GetRandomRotation();
+
                newRock.transform.position = GetNewSpawnLocation();
-               newRock.transform.rotation = Quaternion.Euler(0, 0, 0);
-               rockScript.GetSpriteObj().transform.rotation = Quaternion.Euler(0, 0, rot);
-               #endregion
+               //newRock.transform.rotation = Quaternion.Euler(0, 0, 0);
+               rockScript.GetSpriteRenderer().transform.rotation = Quaternion.Euler(0, 0, rot);
 
-               // Random Color
-               #region RandCol
-               float v = Random.Range(0.6f, 1f);
-               Color variantColor = new Color(v, v, v, 1f);
-               rockScript.GetSpriteObj().GetComponent<SpriteRenderer>().color = variantColor;
                #endregion
-
+               
+               
                // Random speed
                #region RandSpeed
 
@@ -150,13 +195,21 @@ public class RockSpawner : MonoBehaviour {
 
                     if (variantSpeed <= MINSPEED) variantSpeed = MINSPEED;
 
-                    Debug.Log("multiplier activated");
                }
 
                rockScript.SetSpeed(variantSpeed);
 
                #endregion               
 
+
+               // Random Color
+               #region RandCol
+               float v = Random.Range(0.6f, 1f);
+               Color variantColor = new Color(v, v, v, 1f);
+               rockScript.GetSpriteRenderer().color = variantColor;
+               #endregion
+               
+               // Keep track of the rocks
                activeRocks.Add(newRock);
                newRock.SetActive(true);
 
@@ -199,5 +252,7 @@ public class RockSpawner : MonoBehaviour {
      public void AddRockToQueue() { rocksQueued += 1; }
      
      public Vector2 GetBounds() { return new Vector2(minPosX, maxPosX); }
-
+     public void SetNextRockID(int id) { nextRockID = id; }
+     
+     
 }

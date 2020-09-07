@@ -231,6 +231,10 @@ public class GameManager : MonoBehaviour
           scoreUI.text = score.ToString();
           gameOverScore.text = score.ToString();
 
+          //             TESTING                    //
+          if (score % 10 == 0) rockPool.SetNextRockID(1);
+          // ///////////////////////////////////// //
+
           //More Rocks!
           if (Mathf.Log(score, 2) % 1 == 0) {
                rockPool.IncreaseSpeed();
