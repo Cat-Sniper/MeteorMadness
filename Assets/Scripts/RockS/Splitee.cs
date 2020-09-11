@@ -34,9 +34,7 @@ public class Splitee : Rock
      /// </summary>
      public override void DisableRock() {
 
-          destructionEffect = (GameObject)Instantiate(destructionPrefab);
-          destructionEffect.transform.position = transform.position;
-
+          SpawnDestructionEffect();
           Destroy(gameObject);
 
      }

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7195998553514107321}
   - component: {fileID: 7195998553514107320}
   - component: {fileID: -2455143487627657828}
+  - component: {fileID: 344228416972135428}
   m_Layer: 0
   m_Name: RockSmoke
   m_TagString: Untagged
@@ -4967,3 +4968,15 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &344228416972135428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7195998553514107323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aac5b2ee853a11242bd5a900e7e931e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -25,6 +25,9 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
 
+     private const int SPLITTERSPAWN = 15;
+     private const int TANKSPAWN = 35;
+
      private int playerHp;
      [SerializeField] private GameObject[] hpUI;
      [SerializeField] private RockSpawner rockPool;
@@ -36,11 +39,14 @@ public class GameManager : MonoBehaviour
      public AudioSource song;
      private const int firstInc = 25;
      private int score;
+     private int highScore = 0;
      private int prevScore;
      private int difficultyInc;
      private int scoreThreshold;
      private bool gameOver;
      private float screenWidth;
+     private bool muteSounds = false;
+     private bool muteMusic = false;
 
      [SerializeField] private Text scoreUI;
      [SerializeField] private Text gameOverScore;
@@ -55,6 +61,10 @@ public class GameManager : MonoBehaviour
      [SerializeField] private GameObject yesButton;
      [SerializeField] private GameObject noButton;
      [SerializeField] private GameObject gameOverPanel;
+     [SerializeField] private GameObject soundsDisableImage;
+     [SerializeField] private GameObject musicDisableImage;
+     [SerializeField] private Text highScoreDisplay;
+
 
      private GameObject hearts;
      private GameObject scorePanel;
@@ -69,12 +79,39 @@ public class GameManager : MonoBehaviour
           noButton.SetActive(false);
           gameOverPanel.SetActive(false);
 
+          highScore = PlayerPrefs.GetInt("HighScore");
+          highScoreDisplay.text = highScore.ToString();
+          muteMusic = PlayerPrefs.GetInt("MuteMusic") != 0;
+          muteSounds = PlayerPrefs.GetInt("MuteSounds") != 0;
+          
+#if UNITY_EDITOR
+
+          if(UnityEditor.EditorUtility.audioMasterMute){
+
+               muteMusic = true;
+               muteSounds = true;
+
+          }
+#endif      
+
+          if (muteMusic) musicDisableImage.SetActive(true);
+          else musicDisableImage.SetActive(false);
+
+          if (muteSounds) soundsDisableImage.SetActive(true);
+          else soundsDisableImage.SetActive(false);
+
           hearts = GameObject.Find("Hearts");
           scorePanel = GameObject.Find("ScorePanel");
-          
+
           // Initialize camera settings.
-          if (cam.aspect < 1) cam.orthographicSize = 6.0f;
-          else cam.orthographicSize = 4f;
+          if (cam.aspect < 1) {
+               cam.orthographicSize = 6.0f;
+               
+          } else {
+               cam.orthographicSize = 4f;
+               rockPool.speed -= 0.4f;
+          }
+
           lava.transform.position = new Vector3((cam.BoundsMin().x + cam.BoundsMax().x) / 2, cam.BoundsMin().y, 0);
           rockPool.transform.position = new Vector3((cam.BoundsMin().x + cam.BoundsMax().x) / 2, cam.BoundsMax().y + 1, 0);
           rockPool.SetBounds(cam.BoundsMin(), cam.BoundsMax());
@@ -97,25 +134,26 @@ public class GameManager : MonoBehaviour
 
           AudioListener.pause = false;
           song.ignoreListenerPause = true;
+          song.mute = muteMusic;
      }
 
      // Update is called once per frame
      void Update() {
 
-          // TEST DIFFICULTY:
-          // IncrementScore();
-
-
-          // Change Settings based on screen dimensions
-          
-         
-
           float height = 2f * cam.orthographicSize;
           float width = cam.aspect * height;
           if (screenWidth != width) {
 
-               if (cam.aspect < 1) cam.orthographicSize = 6.0f;
-               else cam.orthographicSize = 4f;
+               if (cam.aspect < 1) {
+
+                    cam.orthographicSize = 6.0f;
+                    rockPool.speed += 0.4f;
+
+               } else {
+
+                    cam.orthographicSize = 4f;
+                    rockPool.speed -= 0.4f;
+               }
 
                screenWidth = width;
 
@@ -252,9 +290,10 @@ public class GameManager : MonoBehaviour
           scoreUI.text = score.ToString();
           gameOverScore.text = score.ToString();
 
-          //             TESTING                    //
-          if (score % 10 == 0) rockPool.SetNextRockID(1);
-          // ///////////////////////////////////// //
+          
+          // Check for special rock spawn points
+          if (score % SPLITTERSPAWN == 0) rockPool.SetNextRockID(1);
+          
 
           // Speed Up!
           if (Mathf.Log(score, 2) % 1 == 0) {
@@ -277,14 +316,23 @@ public class GameManager : MonoBehaviour
                prevScore = score;
           }
 
-          //Gain 1 hp up to three every 100 points
+          // Gain 1 hp up to three every 100 points
           if(score % 100 == 0 && playerHp < 3) {
                GainHP();
           }
 
-          
+          if( score > highScore){
+               highScore = score;
+               highScoreDisplay.text = highScore.ToString();
+               PlayerPrefs.SetInt("HighScore", highScore);
+               PlayerPrefs.Save();
+          }
      }
+     
 
+     /// <summary>
+     /// Remove a life when a rock hits the lava, if there are no lives remaining it's game over
+     /// </summary>
      public void MissedRock() {
 
           playerHp -= 1;
@@ -295,12 +343,21 @@ public class GameManager : MonoBehaviour
                GameOver();
         
      }
-
+     
+     /// <summary>
+     /// Gain a life (max of 3)
+     /// </summary>
+     /// <remarks>
+     /// Need to add some sort of animation or graphic to signal the player. Right now they will only see a life return if they have less than 3.
+     /// </remarks>
      public void GainHP() {
           hpUI[playerHp].SetActive(true);
           playerHp++;
      }
-
+     
+     /// <summary>
+     /// Display game over menu with the final score and ask if the player wants to play again.
+     /// </summary>
      private void GameOver() {
 
           gameOver = true;
@@ -310,7 +367,38 @@ public class GameManager : MonoBehaviour
           continueButton.SetActive(false);
           gameOverPanel.SetActive(true);
 
-          Debug.Log("Final Score: " + score);
-       
+          if (highScore < score)
+               PlayerPrefs.SetInt("HighScore", score);
+
      }
+
+     public void ToggleMuteSound(){
+          muteSounds = !muteSounds;
+
+          if (muteSounds) 
+               soundsDisableImage.SetActive(true);
+
+           else
+               soundsDisableImage.SetActive(false);
+          
+          PlayerPrefs.SetInt("MuteSounds", muteSounds ? 1 : 0);
+          PlayerPrefs.Save();
+     }
+
+     public void ToggleMuteMusic(){
+          muteMusic = !muteMusic;
+          song.mute = muteMusic;
+
+          if (muteMusic)
+               musicDisableImage.SetActive(true);
+
+           else
+               musicDisableImage.SetActive(false);
+
+          PlayerPrefs.SetInt("MuteMusic", muteMusic ? 1 : 0);
+          PlayerPrefs.Save();
+     }
+     
+     public bool AreSoundsMuted(){ return muteSounds; }
+     public bool IsMusicMuted() { return muteMusic; }
 }

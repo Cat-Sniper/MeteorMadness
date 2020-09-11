@@ -15,6 +15,7 @@ using UnityEngine;
 public class RandomPitch : MonoBehaviour {
 
      private AudioSource audioOut;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -22,9 +23,5 @@ public class RandomPitch : MonoBehaviour {
           audioOut.pitch = Random.Range(0.75f, 1.25f);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 }

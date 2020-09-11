@@ -31,7 +31,7 @@ public class RockSpawner : MonoBehaviour {
      private const float MAXPADDING = SPEEDINCREMENT * 2;
      private const float MINPADDING = 0.6f;
      private const float MINSPEED = 0.5f;
-     [SerializeField] private float speed = 1.8f;
+     public float speed = 1.8f;
      
      private float minPosX = 0;
      private float maxPosX = 0;

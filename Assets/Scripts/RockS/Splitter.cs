@@ -19,7 +19,10 @@ public class Splitter : Rock {
      [SerializeField] private GameObject spliteePrefab;
      private GameObject rightSplitee;
      private GameObject leftSplitee;
-
+     
+     /// <summary>
+     /// Splitter Rocks spawn 2 Splitee Rocks.
+     /// </summary>
      public override void DisableRock() {
 
           Vector3 leftPosition = transform.position;
@@ -38,8 +41,7 @@ public class Splitter : Rock {
           rockFactory.activeRocks.Remove(gameObject);
           rockFactory.AddRockToQueue();
 
-          destructionEffect = (GameObject)Instantiate(destructionPrefab);
-          destructionEffect.transform.position = transform.position;
+          SpawnDestructionEffect();
           
           rightSplitee = (GameObject)Instantiate(spliteePrefab);
           rightSplitee.transform.position = rightPosition;

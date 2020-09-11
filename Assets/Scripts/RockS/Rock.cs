@@ -43,6 +43,7 @@ public class Rock : MonoBehaviour {
      protected SpriteRenderer spr;
 
      protected Color spriteTint;
+     protected bool muteSounds;
     
 
      // Start is called before the first frame update
@@ -66,7 +67,8 @@ public class Rock : MonoBehaviour {
           isDying = false;
           deathTimer = 0f;
           snitched = false;
-          
+
+          muteSounds = gameManager.AreSoundsMuted();
 
           float rotation = spr.transform.rotation.eulerAngles.z;
 
@@ -82,12 +84,14 @@ public class Rock : MonoBehaviour {
 
           float dt = Time.deltaTime;            // Note that Timescale == 0 when the game is paused.
           if (!paused) {
-          
-               
+
+               // Testing
+               muteSounds = gameManager.AreSoundsMuted();
 
                Movement(dt);
                Rotation();
                DeathCheck(dt);
+               
                
           }
      }     
@@ -155,8 +159,8 @@ public class Rock : MonoBehaviour {
                canBeClicked = false;
                spr.color = Color.red;
                moveDistance = 0.2f;
-               smokeEffect = (GameObject)Instantiate(smokePrefab);
-               smokeEffect.transform.position = transform.position;
+
+               SpawnSmokeEffect();
 
                // Start death timer?
                isDying = true;
@@ -184,16 +188,49 @@ public class Rock : MonoBehaviour {
      /// </summary>
      public virtual void DisableRock() {
 
-          rockFactory.activeRocks.Remove(gameObject);
-          rockFactory.AddRockToQueue();
-
-          destructionEffect = (GameObject)Instantiate(destructionPrefab);
-          destructionEffect.transform.position = transform.position;
-
-          gameObject.SetActive(false);
+          SpawnDestructionEffect();
+          ReturnToFactory();
         
      }
+     
+     /// <summary>
+     /// Initializes a prefab where a cloud of smoke and a breaking rock sound play out
+     /// </summary>
+     /// <remarks>
+     /// Used when the player clicks on the rock
+     /// </remarks>
+     protected void SpawnDestructionEffect(){
 
+          destructionEffect = (GameObject)Instantiate(destructionPrefab);
+          destructionEffect.GetComponent<AudioSource>().mute = muteSounds;
+          destructionEffect.transform.position = transform.position;
+
+     }
+     
+     /// <summary>
+     /// Initializes a prefab where a smoke trail and bubbling sounds play
+     /// </summary>
+     /// <remarks>
+     /// Used when the rock hits the lava
+     /// </remarks>
+     protected void SpawnSmokeEffect(){
+
+          smokeEffect = (GameObject)Instantiate(smokePrefab);
+          smokeEffect.GetComponent<AudioSource>().mute = muteSounds;
+          smokeEffect.transform.position = transform.position;
+
+     }
+     
+     /// <summary>
+     /// All-in-one handle for Removing this object from the game and returning it to the pool.
+     /// </summary>
+     protected void ReturnToFactory() {
+
+          rockFactory.activeRocks.Remove(gameObject);
+          rockFactory.AddRockToQueue();
+          gameObject.SetActive(false);
+
+     }
      public void SetSpeed(float spd)    { moveDistance = spd; }
      public void SetPaused(bool psd)    { paused = psd; }
      
