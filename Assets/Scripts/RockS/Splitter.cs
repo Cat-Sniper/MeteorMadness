@@ -20,12 +20,6 @@ public class Splitter : Rock {
      private GameObject rightSplitee;
      private GameObject leftSplitee;
 
-
-     // Start is called before the first frame update
-     void Start() {
-        
-     }
-
      public override void DisableRock() {
 
           Vector3 leftPosition = transform.position;
@@ -35,7 +29,8 @@ public class Splitter : Rock {
           leftPosition.x -= 1f;
           rightPosition.x += 1f;
 
-
+          
+          // Ensure Splitee rocks don't go off the screen
           if (leftPosition.x < bounds.x) leftPosition.x = bounds.x;
           if (rightPosition.x > bounds.y) rightPosition.x = bounds.y;
 

@@ -16,8 +16,9 @@ using UnityEngine;
 public class Splitee : Rock
 {
 
-     protected override void Awake() {
-          base.Awake();
+     public override void OnEnable() {
+
+          base.OnEnable();
 
           Vector2 pos = transform.position;
           Vector2 bounds = rockFactory.GetBounds();
@@ -39,7 +40,11 @@ public class Splitee : Rock
           Destroy(gameObject);
 
      }
-
+     
+     /// <summary>
+     /// The Splitee doesn't prompt the rock spawner to create another rock, the spitter does that on death already.
+     /// </summary>
+     /// <param name="dt"></param>
      public override void DeathCheck(float dt) {
          
           if(isDying && !snitched) {
@@ -53,10 +58,6 @@ public class Splitee : Rock
           }
      }
 
-     public override void OnTriggerEnter2D(Collider2D col) {
-          base.OnTriggerEnter2D(col);
-          Debug.Log("Entered Trigger in Splitee");
-     }
 
      public override void OnTriggerExit2D(Collider2D col) {
 

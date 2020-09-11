@@ -54,7 +54,10 @@ public class Rock : MonoBehaviour {
  
      }
 
-     protected virtual void OnEnable() {
+     /// <summary>
+     /// Initialize the rock once it spawns somewhere.
+     /// </summary>
+     public virtual void OnEnable() {
 
           smokeEffect = null;
           destructionEffect = null;
@@ -77,7 +80,7 @@ public class Rock : MonoBehaviour {
      // Update is called once per frame
      protected virtual void Update() {
 
-          float dt= Time.deltaTime;            // Note that Timescale == 0 when the game is paused.
+          float dt = Time.deltaTime;            // Note that Timescale == 0 when the game is paused.
           if (!paused) {
           
                

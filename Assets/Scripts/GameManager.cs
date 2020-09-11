@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
      private int playerHp;
      [SerializeField] private GameObject[] hpUI;
      [SerializeField] private RockSpawner rockPool;
+     [SerializeField] private GameObject lava;
      [SerializeField] private InputManager inputMan;
 
      public GameObject pauseMenu;
@@ -39,8 +40,7 @@ public class GameManager : MonoBehaviour
      private int difficultyInc;
      private int scoreThreshold;
      private bool gameOver;
-     private ScreenOrientation orientation;
-     private int screenWidth;
+     private float screenWidth;
 
      [SerializeField] private Text scoreUI;
      [SerializeField] private Text gameOverScore;
@@ -55,6 +55,9 @@ public class GameManager : MonoBehaviour
      [SerializeField] private GameObject yesButton;
      [SerializeField] private GameObject noButton;
      [SerializeField] private GameObject gameOverPanel;
+
+     private GameObject hearts;
+     private GameObject scorePanel;
      
      
 
@@ -65,12 +68,24 @@ public class GameManager : MonoBehaviour
           yesButton.SetActive(false);
           noButton.SetActive(false);
           gameOverPanel.SetActive(false);
+
+          hearts = GameObject.Find("Hearts");
+          scorePanel = GameObject.Find("ScorePanel");
+          
+          // Initialize camera settings.
+          if (cam.aspect < 1) cam.orthographicSize = 6.0f;
+          else cam.orthographicSize = 4f;
+          lava.transform.position = new Vector3((cam.BoundsMin().x + cam.BoundsMax().x) / 2, cam.BoundsMin().y, 0);
+          rockPool.transform.position = new Vector3((cam.BoundsMin().x + cam.BoundsMax().x) / 2, cam.BoundsMax().y + 1, 0);
           rockPool.SetBounds(cam.BoundsMin(), cam.BoundsMax());
+
+          screenWidth = cam.orthographicSize * 2f * cam.aspect;
+         
           Time.timeScale = 1.0f;
           scoreUI.text = score.ToString();
           gameOverScore.text = score.ToString();
-          orientation = Screen.orientation;
-          screenWidth = Screen.width;
+
+          
 
           scoreThreshold = 0;
           difficultyInc = 4;
@@ -86,25 +101,31 @@ public class GameManager : MonoBehaviour
 
      // Update is called once per frame
      void Update() {
-          
+
           // TEST DIFFICULTY:
           // IncrementScore();
+
+
+          // Change Settings based on screen dimensions
           
-#if UNITY_EDITOR
+         
 
-          if(screenWidth != Screen.width) {
-               screenWidth = Screen.width;
+          float height = 2f * cam.orthographicSize;
+          float width = cam.aspect * height;
+          if (screenWidth != width) {
+
+               if (cam.aspect < 1) cam.orthographicSize = 6.0f;
+               else cam.orthographicSize = 4f;
+
+               screenWidth = width;
+
+               lava.transform.position = new Vector3((cam.BoundsMin().x + cam.BoundsMax().x) / 2, cam.BoundsMin().y, 0);
+               rockPool.transform.position = new Vector3((cam.BoundsMin().x + cam.BoundsMax().x) / 2, cam.BoundsMax().y + 1, 0);
                rockPool.SetBounds(cam.BoundsMin(), cam.BoundsMax());
+
           }
 
-#else
 
-          if (Screen.orientation != orientation) {
-               orientation = Screen.orientation;
-               rockPool.SetBounds(cam.BoundsMin(), cam.BoundsMax());
-          }
-
-#endif
                
      }
      
@@ -235,14 +256,14 @@ public class GameManager : MonoBehaviour
           if (score % 10 == 0) rockPool.SetNextRockID(1);
           // ///////////////////////////////////// //
 
-          //More Rocks!
+          // Speed Up!
           if (Mathf.Log(score, 2) % 1 == 0) {
                rockPool.IncreaseSpeed();
                Debug.Log("Increasing Speed");
           }
 
-          // Speed Up!
-          // Current Iteration rock speed increases at:
+          // More Rocks!
+          // Current iteration rock count increases at:
           // 25 60 72 129 204 240 350 486 558
           
           if ( score % (firstInc + scoreThreshold) == 0 
@@ -284,8 +305,8 @@ public class GameManager : MonoBehaviour
 
           gameOver = true;
           PauseMenuButton();
-          GameObject.Find("ScorePanel").gameObject.SetActive(false);
-          GameObject.Find("Hearts").gameObject.SetActive(false);
+          scorePanel.SetActive(false);
+          hearts.gameObject.SetActive(false);
           continueButton.SetActive(false);
           gameOverPanel.SetActive(true);
 
