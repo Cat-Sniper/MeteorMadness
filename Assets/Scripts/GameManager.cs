@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour
      private int prevScore;
      private int difficultyInc;
      private int scoreThreshold;
+     private int specialRockThreshold = 0;
      private bool gameOver;
      private float screenWidth;
      private bool muteSounds = false;
@@ -142,6 +143,7 @@ public class GameManager : MonoBehaviour
 
           float height = 2f * cam.orthographicSize;
           float width = cam.aspect * height;
+
           if (screenWidth != width) {
 
                if (cam.aspect < 1) {
@@ -292,10 +294,11 @@ public class GameManager : MonoBehaviour
 
           
           // Check for special rock spawn points
-          if (score % SPLITTERSPAWN == 0) rockPool.SetNextRockID(1);
-          if (score % TANKSPAWN == 0) rockPool.SetNextRockID(2);
+          if (score % (int)Mathf.Max(0, (SPLITTERSPAWN -    specialRockThreshold)) == 0)  rockPool.SetNextRockID(1);
+          if (score % (int)Mathf.Max(0, (TANKSPAWN -        specialRockThreshold)) == 0)  rockPool.SetNextRockID(2);
 
           // Speed Up!
+          // Speed up at 1 2 4 8 16 32 64 128 256 512 etc.
           if (Mathf.Log(score, 2) % 1 == 0) {
                rockPool.IncreaseSpeed();
                Debug.Log("Increasing Speed");
@@ -317,8 +320,13 @@ public class GameManager : MonoBehaviour
           }
 
           // Gain 1 hp up to three every 100 points
-          if(score % 100 == 0 && playerHp < 3) {
-               GainHP();
+          if(score % 100 == 0) {
+
+               specialRockThreshold++;
+               
+               if(playerHp < 3)
+                    GainHP();
+               
           }
 
           if( score > highScore){

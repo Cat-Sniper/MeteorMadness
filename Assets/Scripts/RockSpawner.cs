@@ -71,7 +71,7 @@ public class RockSpawner : MonoBehaviour {
      {
 
           sRockCount = 0;
-          sRockQueue = new int[10];
+          sRockQueue = new int[32];
 
           //Object Pool for rocks
           rockPool = new List<GameObject>();

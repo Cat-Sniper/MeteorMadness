@@ -112,7 +112,7 @@ public class Rock : MonoBehaviour {
      /// </summary>
      protected virtual void Rotation() {
 
-          rotSpeed = moveDistance * 0.1f;
+          rotSpeed = moveDistance * 0.5f;
 
           if (rotateRight) {
 
@@ -232,7 +232,7 @@ public class Rock : MonoBehaviour {
           gameObject.SetActive(false);
 
      }
-     public void SetSpeed(float spd)    { moveDistance = spd; }
+     public virtual void SetSpeed(float spd)    { moveDistance = spd; }
      public void SetPaused(bool psd)    { paused = psd; }
      
      public SpriteRenderer GetSpriteRenderer()   { return spr; }

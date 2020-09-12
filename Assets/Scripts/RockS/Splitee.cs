@@ -65,4 +65,8 @@ public class Splitee : Rock
           }
      }
 
+     public override void SetSpeed(float spd) {
+          moveDistance = spd / 2f;
+     }
+
 }
