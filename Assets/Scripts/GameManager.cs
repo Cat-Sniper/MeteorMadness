@@ -293,7 +293,7 @@ public class GameManager : MonoBehaviour
           
           // Check for special rock spawn points
           if (score % SPLITTERSPAWN == 0) rockPool.SetNextRockID(1);
-          
+          if (score % TANKSPAWN == 0) rockPool.SetNextRockID(2);
 
           // Speed Up!
           if (Mathf.Log(score, 2) % 1 == 0) {

@@ -40,8 +40,6 @@ public class RockSpawner : MonoBehaviour {
      private float rockTimer = 0.0f;
      private float multiplierPadding = 0f;
 
-     private int nextRockID = 0;
-
      public List<GameObject> rockPool;
      public List<GameObject> activeRocks;
 
@@ -57,18 +55,24 @@ public class RockSpawner : MonoBehaviour {
    
 
 
-     [SerializeField] private int rocksQueued = 1;        // How many rocks are ready to be spawned
      public int rocksToPool;
 
      public bool shouldExpandPool = true;
      private bool canSpawnRocks = true;
+
+     private int[] sRockQueue;                              // special rocks lined up in a queue
+     private int sRockCount;                                // How many special rocks are waiting to be spawned
+     [SerializeField] private int rocksQueued = 1;          // How many rocks are ready to be spawned
 
     
 
      // Start is called before the first frame update
      void Start()
      {
-        
+
+          sRockCount = 0;
+          sRockQueue = new int[10];
+
           //Object Pool for rocks
           rockPool = new List<GameObject>();
           
@@ -161,11 +165,9 @@ public class RockSpawner : MonoBehaviour {
      /// <param name="rockID"></param>
      public void CreateRock()
      {
-          
 
-          GameObject newRock = GetPooledObject(nextRockID);
-
-          if (nextRockID != 0) nextRockID = 0;                                       // Reset back to normal rocks after special rock is spawned.
+          // Check the queue for which rock to spawn next
+          GameObject newRock = GetPooledObject(GetNextRockInQueue());
 
           if (newRock != null) {
 
@@ -252,7 +254,45 @@ public class RockSpawner : MonoBehaviour {
      public void AddRockToQueue() { rocksQueued += 1; }
      
      public Vector2 GetBounds() { return new Vector2(minPosX, maxPosX); }
-     public void SetNextRockID(int id) { nextRockID = id; }
+     public void SetNextRockID(int id) {
+
+          if (id > 0) {
+               
+               if(sRockQueue.Length > sRockCount) {
+
+                    sRockQueue[sRockCount] = id;
+                    sRockCount++;
+
+               } else {
+
+                    Debug.Log("sRockQueue Full!!");
+               }
+          }
+
+     }
+     
+     /// <summary>
+     /// Performs the simple dequeue operation on the special rocks if any; Returns 0 otherwise.
+     /// </summary>
+     /// <returns>The ID of the next rock to be spawned</returns>
+
+     private int GetNextRockInQueue() {
+
+          int nextRockID = 0;
+
+          if (sRockCount > 0) {
+
+               nextRockID = sRockQueue[0];
+
+               for (int i = 0; i < sRockCount - 1; i++)
+                    sRockQueue[i] = sRockQueue[i + 1];
+
+               sRockCount--;
+          }
+
+          return nextRockID;
+ 
+     }
      
      
 }

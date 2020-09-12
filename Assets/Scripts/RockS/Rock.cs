@@ -18,7 +18,7 @@ using UnityEngine;
 /// </remarks>
 public class Rock : MonoBehaviour {
 
-     public int ID = 0;                      // Identifies the type of rock to the rock spawner.
+     public int ID = 0;                      // Identifies the type of rock to the rock spawner. Set within the Unity Editor
 
      protected bool paused = false;
      public bool canBeClicked = true;
@@ -218,6 +218,7 @@ public class Rock : MonoBehaviour {
           smokeEffect = (GameObject)Instantiate(smokePrefab);
           smokeEffect.GetComponent<AudioSource>().mute = muteSounds;
           smokeEffect.transform.position = transform.position;
+          smokeEffect.transform.parent = transform;
 
      }
      

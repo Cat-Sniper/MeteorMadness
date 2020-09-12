@@ -16,7 +16,7 @@
    height="128"
    viewBox="0 0 128 128"
    sodipodi:docname="Rocks.svg"
-   inkscape:export-filename="D:\Mike\Documents\_GameDev\sounds.png"
+   inkscape:export-filename="D:\Mike\Documents\_GameDev\tank.png"
    inkscape:export-xdpi="96.000008"
    inkscape:export-ydpi="96.000008"
    inkscape:version="0.92.3 (2405546, 2018-03-11)">
@@ -28,7 +28,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -60,9 +60,9 @@
      inkscape:window-height="1027"
      id="namedview3715"
      showgrid="false"
-     inkscape:zoom="1"
-     inkscape:cx="-241.3029"
-     inkscape:cy="320.82624"
+     inkscape:zoom="0.5"
+     inkscape:cx="-631.77572"
+     inkscape:cy="135.11186"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -416,6 +416,37 @@
            x="-873"
            y="-225.33334">Audio</tspan></text>
     </g>
+    <path
+       style="fill:#7b92a4;fill-opacity:1;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m -180.70353,-472.7161 c -19.62869,2.81437 -38.53541,-0.1361 -56.23276,10.08147 -7.95583,13.7799 -9.73174,34.88212 -9.73174,52.41618 -0.75,19.5 0.92844,39.311 2.67844,45.561 6.25,10.75 17.5165,14.84925 26.5165,14.84925 17.32215,0.63617 46.39831,0.58849 62.72235,0.0178 22.32808,-3.63931 29.37102,-9.09009 29.43957,-28.24917 0.38575,-9.82551 0.40919,-17.66689 0.51498,-27.63252 -0.5772,-12.7844 -0.96136,-26.10696 -2.43861,-38.83475 -5.08981,-11.57288 -2.08057,-7.28261 -13.5172,-23.38816 -9.25,-6.75 -39.95153,-4.82106 -39.95153,-4.82106 z"
+       id="path880"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccccccc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m -205.75,-450.58333 c -14.75,27 -2,79.25 -2,79.25"
+       id="path893"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m -165,-450.83333 c 13.75,37.5 1,79.25 1,79.25"
+       id="path899"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M -98.75,-416.08333 Z"
+       id="path901"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       x="-228"
+       y="-495.33331"
+       id="text905"><tspan
+         sodipodi:role="line"
+         id="tspan903"
+         x="-228"
+         y="-495.33331">Tank</tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"

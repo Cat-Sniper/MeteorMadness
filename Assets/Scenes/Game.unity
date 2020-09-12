@@ -753,7 +753,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 507886126}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.19, z: 0}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 923544553}
@@ -1671,9 +1671,10 @@ MonoBehaviour:
   rockPrefabs:
   - {fileID: 4996732686831541839, guid: 650becdb9738ee844868f0f6d657c485, type: 3}
   - {fileID: 7397751215347280268, guid: ccfe7807e28679b428ab6f4821fc0a78, type: 3}
-  rocksQueued: 3
+  - {fileID: 4996732686831541839, guid: 6757db311b0c4384f9406a62eafdeff9, type: 3}
   rocksToPool: 10
   shouldExpandPool: 1
+  rocksQueued: 3
 --- !u!1 &789694000
 GameObject:
   m_ObjectHideFlags: 0
@@ -2099,7 +2100,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.3}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
