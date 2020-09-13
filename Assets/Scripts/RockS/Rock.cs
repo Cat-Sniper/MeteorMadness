@@ -40,6 +40,7 @@ public class Rock : MonoBehaviour {
      protected GameObject destructionEffect;
      protected RockSpawner rockFactory;
      protected GameManager gameManager;
+     protected Rigidbody2D rigid;
      protected SpriteRenderer spr;
 
      protected Color spriteTint;
@@ -52,6 +53,7 @@ public class Rock : MonoBehaviour {
           rockFactory = GameObject.Find("RockFactory").GetComponent<RockSpawner>();
           gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
           spr = gameObject.GetComponentInChildren<SpriteRenderer>();
+          rigid = gameObject.GetComponent<Rigidbody2D>();
  
      }
 
@@ -82,6 +84,11 @@ public class Rock : MonoBehaviour {
      // Update is called once per frame
      protected virtual void Update() {
 
+          
+     }  
+     
+     protected virtual void FixedUpdate() {
+
           float dt = Time.deltaTime;            // Note that Timescale == 0 when the game is paused.
           if (!paused) {
 
@@ -91,10 +98,10 @@ public class Rock : MonoBehaviour {
                Movement(dt);
                Rotation();
                DeathCheck(dt);
-               
-               
+
+
           }
-     }     
+     }
      
      /// <summary>
      /// Handles movement of the rock - Base rock just moves down from current position at a speed given by RockSpawner
@@ -112,7 +119,7 @@ public class Rock : MonoBehaviour {
      /// </summary>
      protected virtual void Rotation() {
 
-          rotSpeed = moveDistance * 0.5f;
+          rotSpeed = moveDistance * 0.75f;
 
           if (rotateRight) {
 
