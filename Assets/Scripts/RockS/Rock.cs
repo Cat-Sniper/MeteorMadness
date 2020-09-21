@@ -106,9 +106,8 @@ public class Rock : MonoBehaviour {
      /// <summary>
      /// Handles movement of the rock - Base rock just moves down from current position at a speed given by RockSpawner
      /// </summary>
-     protected virtual void Movement(float dt) {
+     public virtual void Movement(float dt) {
 
-          Vector2 prevPos = transform.position;
           transform.Translate(Vector3.down * dt * moveDistance);
 
      }
@@ -117,7 +116,7 @@ public class Rock : MonoBehaviour {
      /// Handles the rotation of the sprite - Base rock rotates in the direction it is told by RockSpawner and at a rate relative to movement speed. 
      /// Flips sprite depending on direction.
      /// </summary>
-     protected virtual void Rotation() {
+     public virtual void Rotation() {
 
           rotSpeed = moveDistance * 0.75f;
 
